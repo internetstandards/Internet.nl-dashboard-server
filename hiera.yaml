@@ -1,3 +1,5 @@
+---
+# Docs: https://puppet.com/docs/puppet/5.2/hiera_config_yaml_5.html#syntax
 version: 5
 defaults:  # Used for any hierarchy level that omits these keys.
   datadir: data         # This path is relative to hiera.yaml's directory.
