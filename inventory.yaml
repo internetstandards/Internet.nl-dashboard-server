@@ -1,0 +1,9 @@
+nodes:
+  - name: dashboard.internet.nl
+    vars:
+      env: live
+  - name: acc.dashboard.internet.nl
+    vars:
+      env: staging
+  - name: 172.30.1.5
+    alias: lab
