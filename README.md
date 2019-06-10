@@ -14,10 +14,11 @@
     make test
     vagrant ssh
 
-## Applying server configuration
+## Applying server configuration on live servers
 
-    make apply
+    make live
 
-To only one host:
+Or staging:
 
-    make apply node=acc.dashboard.internet.nl
+    make staging
+

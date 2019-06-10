@@ -8,7 +8,7 @@ class dashboard (
   class { '::dashboard::ingress': }
 
   class {'docker::compose':
-    ensure => present,
+    ensure  => present,
     version => '1.24.0',
   }
 

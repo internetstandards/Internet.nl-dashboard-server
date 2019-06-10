@@ -6,8 +6,8 @@ class dashboard::ingress inherits dashboard {
   file { '/etc/traefik/traefik.toml':
     content => epp('dashboard/traefik.toml', {
       bofh_email => $bofh_email,
-      domain => $domain,
-      subdomain => $subdomain,
+      domain     => $domain,
+      subdomain  => $subdomain,
       le_staging => $le_staging,
     }),
   }
@@ -28,38 +28,38 @@ class dashboard::ingress inherits dashboard {
 
   File['/etc/traefik/traefik.toml']
   ~> ::docker::run { 'traefik':
-    image => 'traefik:latest',
-    systemd_restart => always,
-    volumes => [
+    image                 => 'traefik:latest',
+    systemd_restart       => always,
+    volumes               => [
       '/etc/traefik/traefik.toml:/etc/traefik/traefik.toml',
       '/var/run/docker.sock:/var/run/docker.sock:ro',
     ],
-    ports => [
+    ports                 => [
       '80:80',
       '443:443',
       '8000:8000',
     ],
-    net => dashboard,
+    net                   => dashboard,
     health_check_interval => 60,
   }
 
   ::docker::run { 'maintenance':
-    image => 'python:3',
-    command => 'python -m http.server 80',
-    extra_parameters => [
+    image                 => 'python:3',
+    command               => 'python -m http.server 80',
+    extra_parameters      => [
       '--workdir=/var/www/maintenance',
     ],
-    systemd_restart => always,
-    volumes => [
+    systemd_restart       => always,
+    volumes               => [
       '/var/www/maintenance/:/var/www/maintenance/',
     ],
-    labels => [
+    labels                => [
       'traefik.enable=true',
       'traefik.frontend.priority=1',
       'traefik.frontend.rule=Path:/',
       'traefik.port=80',
     ],
-    net => dashboard,
+    net                   => dashboard,
     health_check_interval => 60,
   }
 }
