@@ -12,7 +12,7 @@ promote_latest_to_staging:
 	docker tag internetstandards/dashboard:latest internetstandards/dashboard:staging
 	docker push internetstandards/dashboard:staging
 
-promote_staging_tolive:
+promote_staging_to_live:
 	docker pull internetstandards/dashboard:staging
 	docker tag internetstandards/dashboard:staging internetstandards/dashboard:live
 	docker push internetstandards/dashboard:live
