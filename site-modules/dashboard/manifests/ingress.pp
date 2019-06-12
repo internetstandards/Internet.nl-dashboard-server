@@ -37,7 +37,6 @@ class dashboard::ingress inherits dashboard {
     ports                 => [
       '80:80',
       '443:443',
-      '8000:8000',
     ],
     net                   => dashboard,
     health_check_interval => 60,
