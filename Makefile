@@ -28,21 +28,35 @@ modules/: Puppetfile | bolt
 	${bolt} puppetfile install
 	@touch $@
 
-plan: fix modules/ | bolt
+plan: modules/ | bolt
 	${bolt} plan --verbose run --noop dashboard::server --nodes ${nodes} ${args}
 
-apply: fix modules/ | bolt
+apply: modules/ | bolt
 	${bolt} plan --verbose run dashboard::server --nodes ${nodes} ${args}
 
 bolt: ${bolt}
-${bolt}:
-	brew cask install puppetlabs/puppet/puppet-bolt
-
 puppet-lint: ${puppet-lint}
 
+ifeq ($(UNAME_S),Darwin)
+${bolt}:
+	brew cask install puppetlabs/puppet/puppet-bolt
 ${puppet-lint}:
 	brew tap rockyluke/devops
 	brew install puppet-lint
+else ifneq (,$(shell grep ubuntu /etc/os-release))
+${bolt}:
+	wget https://apt.puppet.com/puppet6-release-$(shell lsb_release -c -s).deb
+	sudo dpkg -i puppet6-release-$(shell lsb_release -c -s).deb
+	rm -f puppet6-release-$(shell lsb_release -c -s).deb
+	sudo apt-get update -qq
+	sudo apt-get install -yqq puppet-bolt
+${puppet-lint}:
+	sudo apt-get install -yqq puppet-lint
+else
+$(error Unsupported system ${os})
+endif
+
+
 
 clean:
 	rm -rf .make.*
