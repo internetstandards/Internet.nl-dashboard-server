@@ -8,11 +8,9 @@
 - https://puppet.com/docs/bolt/latest/inventory_file.html
 - https://puppet.com/docs/bolt/latest/bolt_installing_modules.html#install-modules
 
-## Testing server configuration
+## Testing server configuration on local virtual machine
 
-    vagrant up
     make test
-    vagrant ssh
 
 ## Applying server configuration on live servers
 

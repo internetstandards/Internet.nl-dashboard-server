@@ -25,7 +25,7 @@ email = "<%= $bofh_email %>"
 <% if $le_staging { -%>
 caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 <% } -%>
-storage = "acme.json"
+storage = "/etc/traefik/acme.json"
 entryPoint = "https"
     [acme.httpChallenge]
     entryPoint = "http"
