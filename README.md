@@ -22,3 +22,20 @@ Or staging:
 
     make staging
 
+## Updating Dashboard application from latest image on Docker hub
+
+### Staging
+
+Make sure the desired version of image `internetstandards/dashboard:latest` is pushed to Docker hub.
+
+    make promote_latest_to_staging
+    make update_staging
+
+Or:
+
+    make promote_latest_to_staging update_staging
+
+### Live
+
+    make promote_staging_to_live
+    make update_live

@@ -11,7 +11,7 @@ class base {
   class { '::unattended_upgrades': }
 
   # utility packages
-  ensure_packages(['sl', 'atop', 'htop', 'unzip', 'jq', 'cron', 'curl', 'net-tools'])
+  ensure_packages(['sl', 'atop', 'htop', 'unzip', 'jq', 'cron', 'curl', 'net-tools', 'ncdu'])
 
   # sudo
   sudo::conf { 'sudo':

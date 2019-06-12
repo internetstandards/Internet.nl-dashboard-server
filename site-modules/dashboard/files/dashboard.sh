@@ -1,7 +1,11 @@
 #!/bin/bash
 
-set -xe
+if ! test "$(whoami)" == "root";then
+  echo "Error: must run as root! Login as root user or use sudo: sudo su -"
+  exit 1
+fi
 
-cd /srv/dashboard/compose/
-
-docker exec -ti dashboard_dashboard_1 dashboard "$@"
+exec docker exec \
+    $(tty -s && echo '-ti') \
+    dashboard \
+    dashboard "$@"

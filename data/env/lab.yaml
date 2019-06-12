@@ -1,0 +1,2 @@
+dashboard::app::hosts:
+  - 172.30.1.5

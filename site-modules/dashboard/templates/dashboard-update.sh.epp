@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# update dashboard application
+
+if ! test "$(whoami)" == "root";then
+  echo "Error: must run as root! Login as root user or use sudo: sudo su -"
+  exit 1
+fi
+
+# exit on every error
+set -e
+
+image="internetstandards/dashboard:<%= $image_tag %>"
+
+# save current image as rollback
+/usr/bin/docker tag "${image}" "${image/<%= $image_tag %>/<%= $image_tag %>-1}"
+
+sha="$(docker image ls internetstandards/dashboard:latest -q)"
+
+echo "Updating image"
+/usr/bin/docker pull "${image}"
+echo
+
+newsha="$(docker image ls internetstandards/dashboard:latest -q)"
+
+if [[ "$sha" = "$newsha" ]]; then
+    echo "Warning: image sha has not changed!"
+    echo
+fi
+
+echo "Restarting app & worker"
+systemctl stop docker-dashboard\*.service
+systemctl start docker-dashboard\*.service
+echo
+
+# wait for container to be available
+timeout 10 /bin/sh -c 'while ! docker inspect dashboard >/dev/null;do sleep 1;done'
+
+echo "Applying database migrations"
+/usr/local/bin/dashboard migrate
+echo
+
+# wait for app to be available
+timeout 30 /bin/sh -c 'while ! curl -s $(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" dashboard):8000 >/dev/null ;do sleep 1; done'
+
+# show container startus after deploy
+docker ps
+echo
+
+echo "Deploy complete!"
+echo

@@ -2,3 +2,4 @@
 dashboard::domain: internet.nl
 dashboard::subdomain: acc.dashboard
 dashboard::le_staging: false
+dashboard::app::image_tag: staging

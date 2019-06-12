@@ -1,3 +1,4 @@
 ---
 dashboard::domain: internet.nl
 dashboard::le_staging: false
+dashboard::app::image_tag: live

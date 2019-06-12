@@ -19,19 +19,19 @@ class dashboard::ingress inherits dashboard {
     content => epp('dashboard/maintenance.html'),
   }
 
-  docker_network { 'dashboard':
-    ensure => present,
-  } -> Docker::Run <| |>
-
   ufw::allow { 'allow-http': port => 80, }
   ufw::allow { 'allow-https': port => 443, }
+
+  if $env == lab {
+    ufw::allow { 'allow-traefik-dash': port => 8000, }
+  }
 
   File['/etc/traefik/traefik.toml']
   ~> ::docker::run { 'traefik':
     image                 => 'traefik:latest',
     systemd_restart       => always,
     volumes               => [
-      '/etc/traefik/traefik.toml:/etc/traefik/traefik.toml',
+      '/etc/traefik/:/etc/traefik/',
       '/var/run/docker.sock:/var/run/docker.sock:ro',
     ],
     ports                 => [
