@@ -2,11 +2,11 @@
 
 ## Applying server configuration on live servers
 
-    make live
+    make provision_staging
 
-Or staging:
+Or for the live server:
 
-    make staging
+    make provision_live
 
 ## Updating Dashboard application from latest image on Docker hub
 
@@ -17,7 +17,7 @@ Make sure the desired version of image `internetstandards/dashboard:latest` is p
     make promote_latest_to_staging
     make update_staging
 
-Or:
+Or combined:
 
     make promote_latest_to_staging update_staging
 

@@ -26,40 +26,26 @@ promote_staging_to_live:
 	docker tag internetstandards/dashboard:staging internetstandards/dashboard:live
 	docker push internetstandards/dashboard:live
 
-update_staging: nodes=staging
-update_staging: update
-
-update_live: nodes=live
-update_live: update
-
-update:
-	${bolt} command run "/usr/local/bin/dashboard-update" -n ${nodes}
+update_staging update_live: update_%:
+	${bolt} command run "/usr/local/bin/dashboard-update" -n $*
 
 # Spin up and provision local VM for testing
-lab: nodes=lab
-lab: labhost apply_lab
+lab: labhost provision_lab
 
 labhost: | ${vagrant} ${virtualbox}
 	# check if testhost is up or start it
 	nc 172.30.1.5 -z 22 || ${vagrant} up
 
 # Local integrationtesting
-test: test_inspec lab labhost | ${inspec}
+test: lab test_inspec | ${inspec}
 test_inspec:
 	${inspec} exec spec/ \
 		-t ssh://vagrant@172.30.1.5 \
 		-i .vagrant/machines/default/virtualbox/private_key
 
 # Provision online nodes
-staging: nodes=acc.dashboard.internet.nl
-staging: apply_staging
-
-live: nodes=dashboard.internet.nl
-live: apply_live
-
-apply_%: plan=server
-apply_%: modules/ | ${bolt}
-	${bolt} plan --verbose run dashboard::${plan} --nodes $* ${args}
+provision_lab provision_staging provision_live: provision_%: modules/ | ${bolt}
+	${bolt} plan --verbose run dashboard::server --nodes $* ${args}
 
 # Development workflow
 fix: .make.fix
