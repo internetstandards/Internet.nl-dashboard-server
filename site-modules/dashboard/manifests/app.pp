@@ -35,7 +35,7 @@ class dashboard::app (
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
       'DB_HOST=db',
-      'BROKER=redis',
+      'BROKER=redis://broker:6379/0',
     ],
   }
   ~> exec { 'migrate-db':
