@@ -10,7 +10,9 @@
 
 ## Testing server configuration on local virtual machine
 
-    make test
+    make lab
+
+Machine will be available at ip: http://172.30.1.5
 
 ## Applying server configuration on live servers
 
