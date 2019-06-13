@@ -10,9 +10,13 @@
 
 ## Testing server configuration on local virtual machine
 
+Run the follow command to setup a local VM as testserver and provision it. Or update the provisioning if the server already exists.
+
     make lab
 
-Machine will be available at ip: http://172.30.1.5
+Server will be available at ip: http://172.30.1.5
+
+Traefik dashboard: http://172.30.1.5:8000
 
 ## Applying server configuration on live servers
 
