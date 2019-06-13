@@ -53,7 +53,7 @@ class dashboard::app (
     health_check_interval => 60,
     env                   => [
       'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=YFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
       'ALLOWED_HOSTS=*',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
