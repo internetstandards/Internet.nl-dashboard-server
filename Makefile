@@ -6,6 +6,7 @@ ifeq ($(shell uname -s),Darwin)
 puppet-lint = /usr/local/bin/puppet-lint
 vagrant = /usr/local/bin/vagrant
 virtualbox = /usr/local/bin/virtualbox
+inspec = /usr/local/bin/inspec
 else
 puppet-lint = /usr/bin/puppet-lint
 vagrant = /usr/bin/vagrant
@@ -42,6 +43,13 @@ labhost: | ${vagrant} ${virtualbox}
 	# check if testhost is up or start it
 	nc 172.30.1.5 -z 22 || ${vagrant} up
 
+# Local integrationtesting
+test: test_inspec lab labhost | ${inspec}
+test_inspec:
+	${inspec} exec spec/ \
+		-t ssh://vagrant@172.30.1.5 \
+		-i .vagrant/machines/default/virtualbox/private_key
+
 # Provision online nodes
 staging: nodes=acc.dashboard.internet.nl
 staging: apply_staging
@@ -55,15 +63,15 @@ apply_%: modules/ | ${bolt}
 
 # Development workflow
 fix: .make.fix
-.make.fix: $(shell find site-modules/ -name *.pp) | ${puppet-lint}
-	${puppet-lint} --fix site-modules/
+.make.fix: $(shell find Boltdir/site-modules/ -name *.pp) | ${puppet-lint}
+	${puppet-lint} --fix Boltdir/site-modules
 	@touch $@
 
 check: .make.check
-.make.check: $(shell find site-modules/ -name *.pp)
-	${puppet-lint} site-modules/
+.make.check: $(shell find Boltdir/site-modules/ -name *.pp)
+	${puppet-lint} Boltdir/site-modules
 
-modules/: Puppetfile | ${bolt}
+modules/: Boltdir/Puppetfile | ${bolt}
 	${bolt} puppetfile install
 	@touch $@
 
@@ -78,6 +86,8 @@ ${vagrant}:
 	brew cask install vagrant
 ${virtualbox}:
 	brew cask install virtualbox
+${inspec}:
+	brew cask install chef/chef/inspec
 else ifneq (,$(shell grep ubuntu /etc/os-release))
 ${bolt}:
 	wget https://apt.puppet.com/puppet6-release-$(shell lsb_release -c -s).deb

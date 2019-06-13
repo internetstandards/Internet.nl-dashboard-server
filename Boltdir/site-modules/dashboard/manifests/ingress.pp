@@ -1,14 +1,14 @@
 # manage ingress webserver, caching, general maintenance
-class dashboard::ingress inherits dashboard {
+class dashboard::ingress {
   file { '/etc/traefik/':
     ensure => directory,
   }
   file { '/etc/traefik/traefik.toml':
     content => epp('dashboard/traefik.toml', {
-      bofh_email => $bofh_email,
-      domain     => $domain,
-      subdomain  => $subdomain,
-      le_staging => $le_staging,
+      bofh_email => $dashboard::bofh_email,
+      domain     => $dashboard::domain,
+      subdomain  => $dashboard::subdomain,
+      le_staging => $dashboard::le_staging,
     }),
   }
 
@@ -19,11 +19,22 @@ class dashboard::ingress inherits dashboard {
     content => epp('dashboard/maintenance.html'),
   }
 
-  ufw::allow { 'allow-http': port => 80, }
-  ufw::allow { 'allow-https': port => 443, }
+  base::firewall::allow { ['80', '443']: }
 
-  if $env == lab {
-    ufw::allow { 'allow-traefik-dash': port => 8000, }
+  if $::env == lab {
+    base::firewall::allow { '8000': }
+  }
+
+  $ports = $::env ? {
+    lab => [
+      '80:80',
+      '443:443',
+      '8000:8000',
+    ],
+    default => [
+      '80:80',
+      '443:443',
+    ]
   }
 
   File['/etc/traefik/traefik.toml']
@@ -34,10 +45,7 @@ class dashboard::ingress inherits dashboard {
       '/etc/traefik/:/etc/traefik/',
       '/var/run/docker.sock:/var/run/docker.sock:ro',
     ],
-    ports                 => [
-      '80:80',
-      '443:443',
-    ],
+    ports                 => $ports,
     net                   => dashboard,
     health_check_interval => 60,
   }

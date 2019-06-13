@@ -11,3 +11,7 @@ nodes:
     alias: lab
     vars:
       env: lab
+    config:
+      ssh:
+        user: vagrant
+        private-key: .vagrant/machines/default/virtualbox/private_key
