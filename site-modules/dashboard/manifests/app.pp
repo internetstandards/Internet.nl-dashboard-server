@@ -46,7 +46,7 @@ class dashboard::app (
     try_sleep   => 5,
   }
 
-  ::docker::run { 'worker':
+  ::docker::run { 'dashboard-worker':
     image                 => "internetstandards/dashboard:${image_tag}",
     systemd_restart       => always,
     net                   => dashboard,
@@ -62,6 +62,24 @@ class dashboard::app (
       'C_FORCE_ROOT=1',
     ],
     command               => 'celery_dashboard worker -Q storage -l debug',
+  }
+
+  ::docker::run { 'dashboard-scheduler':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    env                   => [
+      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
+      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      'ALLOWED_HOSTS=*',
+      'DJANGO_DATABASE=production',
+      'DB_ENGINE=postgresql_psycopg2',
+      'DB_HOST=db',
+      'BROKER=redis://broker:6379/0',
+      'C_FORCE_ROOT=1',
+    ],
+    command               => 'celery_dashboard beat -l info --pidfile=/var/tmp/celerybeat.pid',
   }
 
   ::docker::run { 'db':
@@ -90,4 +108,11 @@ class dashboard::app (
     net                   => dashboard,
     health_check_interval => 60,
   }
+
+  # cleanup
+  ::docker::run { ['worker', 'scheduler']:
+    ensure => absent,
+    image  => "internetstandards/dashboard:${image_tag}",
+  }
+
 }
