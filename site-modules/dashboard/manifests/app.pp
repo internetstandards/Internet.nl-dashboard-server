@@ -13,7 +13,7 @@ class dashboard::app (
     content => epp('dashboard/dashboard-update.sh', {
       image_tag=>$image_tag
     }),
-    mode   => '0755',
+    mode    => '0755',
   }
 
   $_hosts = join($hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
@@ -61,7 +61,7 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command => 'celery_dashboard worker -Q storage -l debug',
+    command               => 'celery_dashboard worker -Q storage -l debug',
   }
 
   ::docker::run { 'db':

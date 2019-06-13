@@ -2,7 +2,7 @@ nodes ?= all
 
 bolt = /opt/puppetlabs/bin/bolt
 pdk = /opt/puppetlabs/pdk/bin/pdk
-puppet-lint = /usr/local/bin/puppet-lint
+puppet-lint = /usr/bin/puppet-lint
 vagrant = /usr/local/bin/vagrant
 
 all: | bolt
