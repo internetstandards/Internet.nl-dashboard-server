@@ -44,7 +44,7 @@ test_inspec:
 		-i .vagrant/machines/default/virtualbox/private_key
 
 # Provision online nodes
-provision_lab provision_staging provision_live: provision_%: modules/ | ${bolt}
+provision_lab provision_staging provision_live: provision_%: Boltdir/modules/ | ${bolt}
 	${bolt} plan --verbose run dashboard::server --nodes $* ${args}
 
 # Development workflow
@@ -57,7 +57,7 @@ check: .make.check
 .make.check: $(shell find Boltdir/site-modules/ -name *.pp)
 	${puppet-lint} Boltdir/site-modules
 
-modules/: Boltdir/Puppetfile | ${bolt}
+Boltdir/modules/: Boltdir/Puppetfile | ${bolt}
 	${bolt} puppetfile install
 	@touch $@
 
@@ -91,5 +91,5 @@ clean:
 	rm -rf .make.*
 
 mrproper: clean
-	rm -rf modules/
+	rm -rf Boltdir/modules/
 	-vagrant destroy -f

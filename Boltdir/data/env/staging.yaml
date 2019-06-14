@@ -3,3 +3,6 @@ dashboard::domain: internet.nl
 dashboard::subdomain: acc.dashboard
 dashboard::le_staging: false
 dashboard::app::image_tag: staging
+
+base::ipv6_address: 2a01:7c8:aab2:3f::1/48
+base::ipv6_gateway: 2a01:7c8:aab2::1

@@ -18,6 +18,11 @@ class dashboard::app (
 
   $_hosts = join($hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
 
+  $headers = join([
+    'Strict-Transport-Security:max-age=31536000;includeSubdomains',
+    'X-Clacks-Overhead:GNU Terry Pratchett',
+  ], '||')
+
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
     systemd_restart       => always,
@@ -27,6 +32,7 @@ class dashboard::app (
       'traefik.enable=true',
       'traefik.frontend.priority=10',
       "traefik.frontend.rule=Host:${_hosts}",
+      "'traefik.frontend.headers.customResponseHeaders=${headers}'",
     ],
     env                   => [
       'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
@@ -38,6 +44,12 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
     ],
   }
+  # TODO: tries does not seem to work when using bolt? investigate, meanwhile take this approach
+  ~> exec { 'sleep before migrate to make sure container is up':
+    command     => '/bin/sleep 30',
+    refreshonly => true,
+  }
+  # TODO: move migrate to systemd unit for retries and log catching?
   ~> exec { 'migrate-db':
     command     => '/usr/local/bin/dashboard migrate',
     refreshonly => true,

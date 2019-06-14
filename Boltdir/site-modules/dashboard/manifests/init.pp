@@ -4,13 +4,21 @@ class dashboard (
   $domain = 'internet.test',
   $subdomain = 'dashboard',
   $le_staging = true,
+  $ipv6_subnet = undef,
 ){
   $docker_subnet = '172.17.0.0/16'
   $dashboard_subnet = '172.18.0.0/16'
 
-  class { '::docker':
-    iptables   => false,
-    fixed_cidr => $docker_subnet
+  if $ipv6_subnet {
+    $ipv6_parameters = ['--ipv6', "--fixed-cidr-v6=${ipv6_subnet}"]
+  } else {
+    $ipv6_parameters = []
+  }
+
+  class {'::docker':
+    iptables         => false,
+    fixed_cidr       => $docker_subnet,
+    extra_parameters => $ipv6_parameters,
   }
 
   docker_network { 'dashboard':

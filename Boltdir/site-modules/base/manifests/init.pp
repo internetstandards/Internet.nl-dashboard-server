@@ -1,5 +1,8 @@
 # provide application independent OS layer base settings
-class base {
+class base (
+  $ipv6_address = undef,
+  $ipv6_gateway = undef,
+){
   $osinfo = $::os['distro']['description']
   notice("fqdn=${::fqdn}, env=${::environment}, os=${osinfo}")
 
@@ -11,7 +14,10 @@ class base {
   class { '::unattended_upgrades': }
 
   # utility packages
-  ensure_packages(['sl', 'atop', 'htop', 'unzip', 'jq', 'cron', 'curl', 'net-tools', 'ncdu'])
+  ensure_packages([
+    'sl', 'atop', 'htop', 'unzip', 'jq',
+    'cron', 'curl', 'net-tools', 'ncdu', 'tcpdump',
+  ])
 
   # sudo
   sudo::conf { 'sudo':
@@ -62,4 +68,20 @@ class base {
       ensure   => present,
   }
 
+  # IPv6
+  class {'network': }
+
+  network::interface { $::networking['primary']:
+    enable_dhcp => true,
+  }
+
+  if $ipv6_address {
+    network::interface { "${::networking['primary']}_v6":
+      auto      => false,
+      interface => $::networking['primary'],
+      family    => inet6,
+      ipaddress => $ipv6_address,
+      gateway   => $ipv6_gateway,
+    }
+  }
 }

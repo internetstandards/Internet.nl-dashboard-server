@@ -46,8 +46,9 @@ class dashboard::ingress {
       '/var/run/docker.sock:/var/run/docker.sock:ro',
     ],
     ports                 => $ports,
-    net                   => dashboard,
+    # net                   => dashboard,
     health_check_interval => 60,
+    net                   => host,
   }
 
   ::docker::run { 'maintenance':
@@ -66,7 +67,7 @@ class dashboard::ingress {
       'traefik.frontend.rule=Path:/',
       'traefik.port=80',
     ],
-    net                   => dashboard,
+    # net                   => dashboard,
     health_check_interval => 60,
   }
 }

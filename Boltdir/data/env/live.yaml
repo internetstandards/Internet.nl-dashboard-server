@@ -2,3 +2,6 @@
 dashboard::domain: internet.nl
 dashboard::le_staging: false
 dashboard::app::image_tag: live
+
+base::ipv6_address: 2a01:7c8:aab1:2c::1/48
+base::ipv6_gateway: 2a01:7c8:aab1::1

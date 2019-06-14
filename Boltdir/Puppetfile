@@ -15,6 +15,9 @@ mod 'puppetlabs/translate', '1.2.0'
 
 mod 'puppetlabs/docker', '3.1.0'
 
+mod 'example42-network', '3.5.1'
+
+
 mod 'petems/swap_file',
   # resolve deprecation warnings
   :git => 'https://github.com/petems/petems-swap_file.git',

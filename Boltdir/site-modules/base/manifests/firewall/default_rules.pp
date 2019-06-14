@@ -13,7 +13,7 @@ define base::firewall::default_rules (
 
   # Default firewall rules
   firewall { "000 accept all icmp (${provider})":
-    proto    => 'icmp',
+    proto    => $icmp,
     action   => 'accept',
     provider => $provider,
   }
