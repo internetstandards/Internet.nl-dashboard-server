@@ -11,6 +11,7 @@ else
 puppet-lint = /usr/bin/puppet-lint
 vagrant = /usr/bin/vagrant
 virtualbox = /usr/bin/virtualbox
+inspec = /usr/bin/inspec
 endif
 
 
@@ -37,8 +38,8 @@ labhost: | ${vagrant} ${virtualbox}
 	nc 172.30.1.5 -z 22 || ${vagrant} up
 
 # Local integrationtesting
-test: lab test_inspec | ${inspec}
-test_inspec:
+test: lab test_inspec
+test_inspec: | ${inspec}
 	${inspec} exec spec/ \
 		-t ssh://vagrant@172.30.1.5 \
 		-i .vagrant/machines/default/virtualbox/private_key
@@ -83,6 +84,11 @@ ${bolt}:
 	sudo apt-get install -yqq puppet-bolt
 ${puppet-lint} ${vagrant} ${virtualbox}:
 	sudo apt-get install -yqq $@
+${inspec}:
+	wget https://packages.chef.io/files/stable/inspec/4.3.2/ubuntu/18.04/inspec_4.3.2-1_amd64.deb
+	sudo dpkg -i inspec_4.3.2-1_amd64.deb
+	rm -f inspec_4.3.2-1_amd64.deb
+	${inspec} version --chef-license=accept-silent >/dev/null
 else
 $(error Unsupported system ${os})
 endif
