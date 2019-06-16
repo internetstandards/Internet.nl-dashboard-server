@@ -44,19 +44,19 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
     ],
   }
-  # TODO: tries does not seem to work when using bolt? investigate, meanwhile take this approach
-  ~> exec { 'sleep before migrate to make sure container is up':
-    command     => '/bin/sleep 30',
-    refreshonly => true,
-  }
-  # TODO: move migrate to systemd unit for retries and log catching?
   ~> exec { 'migrate-db':
     command     => '/usr/local/bin/dashboard migrate',
     refreshonly => true,
-    # might fail if started to early after container start
-    tries       => 5,
+    # might fail if started to early after container start due to container having to be downloaded and started
+    tries       => 60,
     try_sleep   => 5,
+    timeout     => 600,
   }
+
+  [
+    ::Docker::Run[broker],
+    ::Docker::Run[db],
+  ] -> Exec['migrate-db']
 
   ::docker::run { 'dashboard-worker':
     image                 => "internetstandards/dashboard:${image_tag}",

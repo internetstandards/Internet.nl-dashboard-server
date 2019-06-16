@@ -96,6 +96,8 @@ endif
 clean:
 	rm -rf .make.*
 
-mrproper: clean
+mrproper: destroy_vm clean
 	rm -rf Boltdir/modules/
+
+destroy_lab:
 	-vagrant destroy -f
