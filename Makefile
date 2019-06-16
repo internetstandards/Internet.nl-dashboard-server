@@ -45,7 +45,7 @@ test_inspec: | ${inspec}
 		-i .vagrant/machines/default/virtualbox/private_key
 
 # Provision online nodes
-provision_lab provision_staging provision_live: provision_%: Boltdir/modules/ | ${bolt}
+provision_lab provision_staging provision_live provision_all: provision_%: Boltdir/modules/ | ${bolt}
 	${bolt} plan --verbose run dashboard::server --nodes $* ${args}
 
 # Development workflow

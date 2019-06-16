@@ -19,7 +19,21 @@ class dashboard::app (
   $_hosts = join($hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
 
   $headers = join([
+    # tell browsers to only accept this site over https in the future
     'Strict-Transport-Security:max-age=31536000;includeSubdomains',
+    # deny browsers from framing this website
+    'X-Frame-Options:DENY',
+    # don't let browser guess content types
+    'X-Content-Type-Options:nosniff',
+    # prevent browser from rendering page if it detects XSS attack
+    'X-XSS-Protection:1; mode=block',
+    # tell browser to deny any form of framing
+    'X-Frame-Options:SAMEORIGIN',
+    # don't send any referrer info to third parties
+    'Referrer-Policy:same-origin',
+    # disallow loading sources from anything but this site to prevent XSS
+    "Content-Security-Policy:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
+    # pay respect
     'X-Clacks-Overhead:GNU Terry Pratchett',
   ], '||')
 
