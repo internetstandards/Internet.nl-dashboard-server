@@ -32,7 +32,7 @@ class dashboard::app (
     # don't send any referrer info to third parties
     'Referrer-Policy:same-origin',
     # disallow loading sources from anything but this site to prevent XSS
-    "Content-Security-Policy:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
+    # "Content-Security-Policy:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
     # pay respect
     'X-Clacks-Overhead:GNU Terry Pratchett',
   ], '||')
