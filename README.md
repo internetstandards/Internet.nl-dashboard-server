@@ -1,14 +1,20 @@
 # Internet.nl Dashboard server configuration
 
+This repository contains infrastructure and server configuration for the Internet.nl Dashboard application.
+
 ## Applying server configuration on live servers
+
+This will ensure the server configuration (OS, middleware, etc) is brought in line with the expected configuration in `Boltdir/`.
 
     make provision_staging
 
-Or for the live server:
+Or for the production server:
 
     make provision_live
 
-## Updating Dashboard application from latest image on Docker hub
+## Updating the Dashboard application from latest image on Docker hub
+
+This will update the Dashboard application itself and leave server configuration alone. It will pull in the latest version of the application from Docker Hub and restart all required application components (frontend, worker, etc) to ensure they are up to date.
 
 ### Staging
 
