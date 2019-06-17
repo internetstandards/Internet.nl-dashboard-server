@@ -42,6 +42,13 @@ class dashboard (
     action      => accept,
   }
 
+  firewall { '100 forwarding containers to internet':
+    chain    => 'FORWARD',
+    proto    => all,
+    outiface => 'docker0',
+    action   => accept,
+  }
+
   # external facing webserver
   class { '::dashboard::ingress': }
 
