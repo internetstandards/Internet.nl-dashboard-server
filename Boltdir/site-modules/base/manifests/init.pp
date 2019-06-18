@@ -11,7 +11,13 @@ class base (
   class { '::accounts': }
 
   # enable apt unattended security upgrades
-  class { '::unattended_upgrades': }
+  class { '::unattended_upgrades':
+    # reboot outside of office hours if security updates require this
+    auto => {
+      reboot      => true,
+      reboot_time => '20:00',
+    }
+  }
 
   # utility packages
   ensure_packages([

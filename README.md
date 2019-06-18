@@ -32,6 +32,16 @@ Or combined:
     make promote_staging_to_live
     make update_live
 
+## Maintenance
+
+### Security updates
+
+Security patches are applied automatically every day. If a reboot is required (eg: kernel update) this will be automatically performed at 20:00.
+
+To manually trigger an security hotfix and potential immediate reboot run:
+
+    bolt plan run base::security_hotfix --nodes staging
+
 ## Development compulsory reading
 
 - https://puppet.com/blog/introducing-masterless-puppet-bolt
