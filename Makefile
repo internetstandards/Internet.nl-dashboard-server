@@ -32,7 +32,7 @@ update_staging update_live: update_%:
 	${bolt} command run "/usr/local/bin/dashboard-update" -n $*
 
 # Spin up and provision local VM for testing
-lab: labhost provision_lab
+lab: labhost apply_lab
 labhost: | ${vagrant} ${virtualbox}
 	# check if testhost is up or start it
 	nc 172.30.1.5 -z 22 || ${vagrant} up
@@ -45,8 +45,11 @@ test_inspec: | ${inspec}
 		-i .vagrant/machines/default/virtualbox/private_key
 
 # Apply server configuration to nodes
-provision_lab provision_staging provision_live provision_all: provision_%: Boltdir/modules/ | ${bolt}
+apply_lab apply_staging apply_live apply_all: apply_%: Boltdir/modules/ | ${bolt}
 	${bolt} plan --verbose run dashboard::server --nodes $* ${args}
+
+plan_lab plan_staging plan_live plan_all: plan_%: Boltdir/modules/ | ${bolt}
+	${bolt} plan --verbose run dashboard::server --nodes $* --params='{"noop": true}' ${args}
 
 # Development workflow
 fix: .make.fix

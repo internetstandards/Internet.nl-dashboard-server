@@ -6,11 +6,15 @@ This repository contains infrastructure and server configuration for the Interne
 
 This will ensure the server configuration (OS, middleware, etc) is brought in line with the expected configuration in `Boltdir/`.
 
-    make provision_staging
+    make apply_staging
 
 Or for the production server:
 
-    make provision_live
+    make apply_live
+
+Instead of directly applying the changes you can opt to run a noop apply first be issuing for example:
+
+    make plan_live
 
 ## Updating the Dashboard application from latest image on Docker hub
 
