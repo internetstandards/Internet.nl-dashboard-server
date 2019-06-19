@@ -17,6 +17,8 @@ mod 'puppetlabs/docker', '3.1.0'
 
 mod 'example42-network', '3.5.1'
 
+mod 'thias/sysctl', '1.0.6'
+
 mod 'petems/swap_file',
   # resolve deprecation warnings
   :git => 'https://github.com/petems/petems-swap_file.git',

@@ -82,12 +82,18 @@ class base (
   }
 
   if $ipv6_address {
+    # configure static ipv6 address
     network::interface { "${::networking['primary']}_v6":
       auto      => false,
       interface => $::networking['primary'],
       family    => inet6,
       ipaddress => $ipv6_address,
       gateway   => $ipv6_gateway,
+    }
+    # accepting router advertisements causes the static default gateway
+    # to be dropped after a while
+    sysctl { 'net.ipv6.conf.all.accept_ra':
+      value => '0',
     }
   }
 }
