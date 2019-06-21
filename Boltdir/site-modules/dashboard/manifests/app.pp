@@ -2,6 +2,7 @@
 class dashboard::app (
   $image_tag = latest,
   $hosts = [],
+  $sentry_dsn = undef,
 ) {
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',
@@ -56,6 +57,7 @@ class dashboard::app (
       'DB_ENGINE=postgresql_psycopg2',
       'DB_HOST=db',
       'BROKER=redis://broker:6379/0',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
   }
   ~> exec { 'migrate-db':

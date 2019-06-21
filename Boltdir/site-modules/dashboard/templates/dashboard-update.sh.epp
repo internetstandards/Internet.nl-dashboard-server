@@ -33,6 +33,10 @@ systemctl stop docker-dashboard\*.service
 systemctl start docker-dashboard\*.service
 echo
 
+# wait just a little after restart to not get a false positive on
+# waiting for the container to be up
+sleep 3
+
 # wait for container to be available
 timeout 10 /bin/sh -c 'while ! docker inspect dashboard >/dev/null;do sleep 1;done'
 
