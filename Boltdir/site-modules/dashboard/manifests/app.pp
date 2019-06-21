@@ -3,6 +3,7 @@ class dashboard::app (
   $image_tag = latest,
   $hosts = [],
   $sentry_dsn = undef,
+  $auto_update_interval = undef,
 ) {
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',
@@ -143,4 +144,20 @@ class dashboard::app (
     image  => "internetstandards/dashboard:${image_tag}",
   }
 
+  if $auto_update_interval {
+    systemd::service { 'dashboard-update':
+      description => 'Update dashboard application',
+      type        => 'oneshot',
+      execstart   => '/usr/local/bin/dashboard-update',
+    }
+
+    systemd::timer { 'dashboard-update':
+      on_boot_sec   => $auto_update_interval,
+      on_active_sec => $auto_update_interval,
+    }
+    ~> exec { 'initial trigger dashboard-update timer':
+      command     => '/bin/systemctl start dashboard-update.timer',
+      refreshonly => true,
+    }
+  }
 }

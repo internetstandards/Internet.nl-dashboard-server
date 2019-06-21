@@ -20,18 +20,25 @@ Instead of directly applying the changes you can opt to run a noop apply first b
 
 This will update the Dashboard application itself and leave server configuration alone. It will pull in the latest version of the application from Docker Hub and restart all required application components (frontend, worker, etc) to ensure they are up to date.
 
-### Staging
+### Staging auto Continuous Deployment
+
+Staging server is configured to automatically watch for changes to the Docker image `internetstandards/dashboard:latest` on Docker Hub. It will automatically pull in the latest image and restart required services.
+
+Auto update is configured using Systemd. The `dashboard-update.service` oneshot unit executes the `/usr/local/bin/dashboard-update` script. This script will check for and pull in the latest Docker image and restart services in required.
+
+The `dashboard-update.timer` unit is configured to trigger the `dashboard-update.service` unit every 5 minutes.
+
+To view logging from the update process run `journalctl -u dashboard-update.service` or `journalctl -u dashboard-update.service -f` for live tailing.
+
+To temporary disable auto update (until next reboot) run: `systemctl stop dashboard-update.timer`.
+
+### Manual staging deploy
 
 Make sure the desired version of image `internetstandards/dashboard:latest` is pushed to Docker hub.
 
-    make promote_latest_to_staging
     make update_staging
 
-Or combined:
-
-    make promote_latest_to_staging update_staging
-
-### Live
+### Manual live deploy
 
     make promote_staging_to_live
     make update_live

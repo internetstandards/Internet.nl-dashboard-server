@@ -2,7 +2,11 @@
 dashboard::domain: internet.nl
 dashboard::subdomain: acc.dashboard
 dashboard::le_staging: false
-dashboard::app::image_tag: staging
+dashboard::app::image_tag: latest
+# how often to check for docker image update
+dashboard::app::auto_update_interval: 5min
 
 base::ipv6_address: 2a01:7c8:aab2:3f::1/48
 base::ipv6_gateway: 2a01:7c8:aab2::1
+
+dashboard::app::sentry_dsn: "https://5225954aa62a4bfa9d26da170ec4dddc@sentry.io/1487750"

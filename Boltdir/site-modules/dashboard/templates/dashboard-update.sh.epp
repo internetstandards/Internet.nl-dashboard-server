@@ -17,16 +17,18 @@ image="internetstandards/dashboard:<%= $image_tag %>"
 
 sha="$(docker image ls internetstandards/dashboard:latest -q)"
 
-echo "Updating image"
+echo "Pulling in new image"
 /usr/bin/docker pull "${image}"
 echo
 
 newsha="$(docker image ls internetstandards/dashboard:latest -q)"
 
 if [[ "$sha" = "$newsha" ]]; then
-    echo "Warning: image sha has not changed!"
-    echo
+    echo "Image sha has not changed, not continuing update!"
+    exit 0
 fi
+
+echo "New image with sha ${newsha}, updating"
 
 echo "Restarting app & worker"
 systemctl stop docker-dashboard\*.service

@@ -19,6 +19,9 @@ mod 'example42-network', '3.5.1'
 
 mod 'thias/sysctl', '1.0.6'
 
+mod 'eyp/systemd', '0.2.8'
+mod 'eyp/eyplib', '0.1.16'
+
 mod 'petems/swap_file',
   # resolve deprecation warnings
   :git => 'https://github.com/petems/petems-swap_file.git',
