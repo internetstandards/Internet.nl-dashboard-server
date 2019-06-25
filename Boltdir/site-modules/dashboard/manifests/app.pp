@@ -152,8 +152,8 @@ class dashboard::app (
     }
 
     systemd::timer { 'dashboard-update':
-      on_boot_sec   => $auto_update_interval,
-      on_active_sec => $auto_update_interval,
+      on_boot_sec          => $auto_update_interval,
+      on_unit_inactive_sec => $auto_update_interval,
     }
     ~> exec { 'initial trigger dashboard-update timer':
       command     => '/bin/systemctl start dashboard-update.timer',

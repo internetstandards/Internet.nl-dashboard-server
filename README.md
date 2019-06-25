@@ -32,6 +32,8 @@ To view logging from the update process run `journalctl -u dashboard-update.serv
 
 To temporary disable auto update (until next reboot) run: `systemctl stop dashboard-update.timer`.
 
+To see when the timer last activated and when it will activate next run: `systemctl list-timers`.
+
 ### Manual staging deploy
 
 Make sure the desired version of image `internetstandards/dashboard:latest` is pushed to Docker hub.
