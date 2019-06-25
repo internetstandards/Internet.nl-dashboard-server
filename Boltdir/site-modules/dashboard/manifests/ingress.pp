@@ -67,7 +67,6 @@ class dashboard::ingress {
       'traefik.frontend.rule=Path:/',
       'traefik.port=80',
     ],
-    # net                   => dashboard,
     health_check_interval => 60,
   }
 }

@@ -141,10 +141,13 @@ class dashboard::app (
   # by calling update and migration via systemd we automatically
   # get logging to journald and are sure we don't run 2 processes
   # at the same time
-  systemd::service { 'dashboard-migrate':
+  systemd_file::service { 'dashboard-migrate':
     description => 'Run database migrations for dashboard application',
     type        => 'oneshot',
     execstart   => '/usr/local/bin/dashboard-migrate',
+  }
+  -> service {'dashboard-migrate':
+    enable => true,
   }
   -> file { '/usr/local/bin/dashboard-update':
     content => epp('dashboard/dashboard-update.sh', {
@@ -152,14 +155,17 @@ class dashboard::app (
     }),
     mode    => '0755',
   }
-  -> systemd::service { 'dashboard-update':
+  -> systemd_file::service { 'dashboard-update':
     description => 'Update dashboard application',
     type        => 'oneshot',
     execstart   => '/usr/local/bin/dashboard-update',
   }
+  -> service {'dashboard-update':
+    enable => true,
+  }
 
   if $auto_update_interval {
-    systemd::timer { 'dashboard-update':
+    systemd_file::timer { 'dashboard-update':
       on_boot_sec          => $auto_update_interval,
       on_unit_inactive_sec => $auto_update_interval,
     }

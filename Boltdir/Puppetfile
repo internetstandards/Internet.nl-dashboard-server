@@ -19,7 +19,13 @@ mod 'example42-network', '3.5.1'
 
 mod 'thias/sysctl', '1.0.6'
 
-mod 'eyp/systemd', '0.2.8'
+mod 'puppet/prometheus', '6.4.0'
+mod 'camptocamp-systemd', '2.6.0'
+mod 'puppet-archive', '4.0.0'
+
+mod 'aequitas/systemd_file',
+  :git => 'http://github.com/aequitas/eyp-systemd',
+  :branch => 'master'
 mod 'eyp/eyplib', '0.1.16'
 
 mod 'petems/swap_file',

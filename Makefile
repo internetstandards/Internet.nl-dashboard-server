@@ -35,7 +35,7 @@ update_staging update_live: update_%:
 lab: labhost apply_lab
 labhost: | ${vagrant} ${virtualbox}
 	# check if testhost is up or start it
-	nc 172.30.1.5 -z 22 || ${vagrant} up
+	nc 172.30.1.5 -z 22 -w 3 -n || ${vagrant} up
 
 # Local integrationtesting
 test: lab test_inspec
