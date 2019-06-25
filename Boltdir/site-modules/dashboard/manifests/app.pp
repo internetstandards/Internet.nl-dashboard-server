@@ -11,13 +11,6 @@ class dashboard::app (
   }
   -> ::Docker::Run['dashboard']
 
-  file { '/usr/local/bin/dashboard-update':
-    content => epp('dashboard/dashboard-update.sh', {
-      image_tag=>$image_tag
-    }),
-    mode    => '0755',
-  }
-
   $_hosts = join($hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
 
   $headers = join([
@@ -62,7 +55,7 @@ class dashboard::app (
     ],
   }
   ~> exec { 'migrate-db':
-    command     => '/usr/local/bin/dashboard migrate',
+    command     => '/bin/systemctl start dashboard-migrate',
     refreshonly => true,
     # might fail if started to early after container start due to container having to be downloaded and started
     tries       => 60,
@@ -144,13 +137,28 @@ class dashboard::app (
     image  => "internetstandards/dashboard:${image_tag}",
   }
 
-  if $auto_update_interval {
-    systemd::service { 'dashboard-update':
-      description => 'Update dashboard application',
-      type        => 'oneshot',
-      execstart   => '/usr/local/bin/dashboard-update',
-    }
+  # scripts and services for application update and db migration
+  # by calling update and migration via systemd we automatically
+  # get logging to journald and are sure we don't run 2 processes
+  # at the same time
+  systemd::service { 'dashboard-migrate':
+    description => 'Run database migrations for dashboard application',
+    type        => 'oneshot',
+    execstart   => '/usr/local/bin/dashboard-migrate',
+  }
+  -> file { '/usr/local/bin/dashboard-update':
+    content => epp('dashboard/dashboard-update.sh', {
+      image_tag=>$image_tag
+    }),
+    mode    => '0755',
+  }
+  -> systemd::service { 'dashboard-update':
+    description => 'Update dashboard application',
+    type        => 'oneshot',
+    execstart   => '/usr/local/bin/dashboard-update',
+  }
 
+  if $auto_update_interval {
     systemd::timer { 'dashboard-update':
       on_boot_sec          => $auto_update_interval,
       on_unit_inactive_sec => $auto_update_interval,
