@@ -24,8 +24,8 @@ promote_latest_to_staging:
 	docker push internetstandards/dashboard:staging
 
 promote_staging_to_live:
-	docker pull internetstandards/dashboard:staging
-	docker tag internetstandards/dashboard:staging internetstandards/dashboard:live
+	docker pull internetstandards/dashboard:latest
+	docker tag internetstandards/dashboard:latest internetstandards/dashboard:live
 	docker push internetstandards/dashboard:live
 
 update_staging update_live: update_%:
