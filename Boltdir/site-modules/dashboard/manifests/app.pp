@@ -26,6 +26,9 @@ class dashboard::app (
     'X-Frame-Options:SAMEORIGIN',
     # don't send any referrer info to third parties
     'Referrer-Policy:same-origin',
+    # CSP generated with Mozilla Laboratory after clicking through the site: https://addons.mozilla.org/en-US/firefox/addon/laboratory-by-mozilla/
+    # See https://github.com/internetstandards/Internet.nl-dashboard/issues/53
+    "Content-Security-Policy:default-src 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; img-src 'self' data: https://www.internet.nl; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://matomo.internet.nl/piwik.js; style-src 'self' 'unsafe-inline';",
     # only report on sources that would be disallowed by CSP, as currently there is no clear best configuration for our case
     "Content-Security-Policy-Reporting-Only:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
     # pay respect
