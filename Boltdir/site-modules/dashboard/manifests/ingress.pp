@@ -8,6 +8,7 @@ class dashboard::ingress {
       bofh_email => $dashboard::bofh_email,
       domain     => $dashboard::domain,
       subdomain  => $dashboard::subdomain,
+      hosts      => $dashboard::hosts,
       le_staging => $dashboard::le_staging,
     }),
   }

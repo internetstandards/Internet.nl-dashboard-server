@@ -31,6 +31,11 @@ entryPoint = "https"
     entryPoint = "http"
 [[acme.domains]]
 main = "<%= $subdomain %>.<%= $domain %>"
+sans = [
+<% $hosts.each |$host| { -%>
+"<%= $host %>",
+<% } -%>
+]
 
 [api]
 entryPoint = "traefik"

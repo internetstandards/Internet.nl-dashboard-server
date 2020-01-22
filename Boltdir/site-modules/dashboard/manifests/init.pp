@@ -3,6 +3,7 @@ class dashboard (
   $bofh_email = 'test@example.com',
   $domain = 'internet.test',
   $subdomain = 'dashboard',
+  $hosts = [],
   $le_staging = true,
   $ipv6_subnet = undef,
 ){

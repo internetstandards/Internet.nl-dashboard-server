@@ -1,7 +1,6 @@
 # dashboard app, queue and database
 class dashboard::app (
   $image_tag = latest,
-  $hosts = [],
   $sentry_dsn = undef,
   $auto_update_interval = undef,
 ) {
@@ -11,7 +10,7 @@ class dashboard::app (
   }
   -> ::Docker::Run['dashboard']
 
-  $_hosts = join($hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
+  $_hosts = join($dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
 
   $headers = join([
     # tell browsers to only accept this site over https in the future
