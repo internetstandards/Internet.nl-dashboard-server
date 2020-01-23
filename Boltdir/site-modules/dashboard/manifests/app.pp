@@ -43,7 +43,7 @@ class dashboard::app (
       'traefik.enable=true',
       'traefik.frontend.priority=10',
       "traefik.frontend.rule=Host:${_hosts}",
-      "'traefik.frontend.headers.customResponseHeaders=${headers}'",
+      "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
     ],
     env                   => [
       'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
