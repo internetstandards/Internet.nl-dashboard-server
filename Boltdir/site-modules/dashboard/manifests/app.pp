@@ -146,7 +146,7 @@ class dashboard::app (
   systemd_file::service { 'dashboard-migrate':
     description => 'Run database migrations for dashboard application',
     type        => 'oneshot',
-    execstart   => '/usr/local/bin/dashboard-migrate',
+    execstart   => '/usr/local/bin/dashboard migrate',
   }
   -> service {'dashboard-migrate':
     enable => true,
