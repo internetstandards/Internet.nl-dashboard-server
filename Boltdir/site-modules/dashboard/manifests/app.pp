@@ -85,7 +85,7 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command               => 'celery_dashboard worker -Q storage -l debug',
+    command               => 'celery_dashboard worker -Q storage,celery,reporting,ipv4,ipv6,4and6,internet,isolated -l debug',
   }
 
   ::docker::run { 'dashboard-scheduler':
