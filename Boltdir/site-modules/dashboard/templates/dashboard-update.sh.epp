@@ -43,7 +43,9 @@ sleep 3
 timeout 10 /bin/sh -c 'while ! docker inspect dashboard >/dev/null;do sleep 1;done'
 
 echo "Applying database migrations"
+pid=$(/bin/journalctl --follow --unit dashboard-migrate.service &)
 /bin/systemctl start dashboard-migrate.service
+kill "$pid"
 echo
 
 # wait for app to be available
