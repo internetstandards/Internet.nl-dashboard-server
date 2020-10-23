@@ -15,7 +15,7 @@ image="internetstandards/dashboard:<%= $image_tag %>"
 # save current image as rollback
 /usr/bin/docker tag "${image}" "${image/<%= $image_tag %>/<%= $image_tag %>-1}"
 
-sha="$(docker image ls internetstandards/dashboard:latest -q)"
+sha="$(cat /etc/dashboard-sha 2>/dev/null || true)"
 
 echo "Pulling in new image"
 /usr/bin/docker pull "${image}"
@@ -43,7 +43,7 @@ sleep 3
 timeout 10 /bin/sh -c 'while ! docker inspect dashboard >/dev/null;do sleep 1;done'
 
 echo "Applying database migrations"
-pid=$(/bin/journalctl --follow --unit dashboard-migrate.service &)
+/bin/journalctl --follow --unit dashboard-migrate.service & pid=$!
 /bin/systemctl start dashboard-migrate.service
 kill "$pid"
 echo
@@ -54,6 +54,8 @@ timeout 30 /bin/sh -c 'while ! curl -s $(docker inspect -f "{{range .NetworkSett
 # show container startus after deploy
 docker ps
 echo
+
+echo "$newsha" > /etc/dashboard-sha
 
 echo "Deploy complete!"
 echo
