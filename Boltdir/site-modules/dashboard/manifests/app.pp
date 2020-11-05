@@ -34,6 +34,19 @@ class dashboard::app (
     'X-Clacks-Overhead:GNU Terry Pratchett',
   ], '||')
 
+  ::docker::run { 'dashboard-static':
+    image                 => "internetstandards/dashboard-static:${image_tag}",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    labels                => [
+      'traefik.enable=true',
+      'traefik.frontend.priority=10',
+      "traefik.frontend.rule=Host:${_hosts}",
+      "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
+    ],
+  }
+
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
     systemd_restart       => always,
@@ -42,7 +55,8 @@ class dashboard::app (
     labels                => [
       'traefik.enable=true',
       'traefik.frontend.priority=10',
-      "traefik.frontend.rule=Host:${_hosts}",
+      # all dynamic content should be served by Django, otherwise fallback to static content
+      "traefik.frontend.rule=\"Host:${_hosts}; Path: /data,/logout,/session,/upload,/mail,/account,/admin,/jet\"",
       "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
     ],
     env                   => [
