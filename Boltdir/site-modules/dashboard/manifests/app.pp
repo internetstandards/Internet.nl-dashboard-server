@@ -34,8 +34,8 @@ class dashboard::app (
     'X-Clacks-Overhead:GNU Terry Pratchett',
   ], '||')
 
-  ::docker::run { 'dashboard':
-    image                 => "internetstandards/dashboard:${image_tag}",
+  ::docker::run { 'dashboard-static':
+    image                 => "internetstandards/dashboard-static:${image_tag}",
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -43,6 +43,20 @@ class dashboard::app (
       'traefik.enable=true',
       'traefik.frontend.priority=10',
       "traefik.frontend.rule=Host:${_hosts}",
+      "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
+    ],
+  }
+
+  ::docker::run { 'dashboard':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    labels                => [
+      'traefik.enable=true',
+      'traefik.frontend.priority=20',
+      # all dynamic content should be served by Django, otherwise fallback to static content
+      "traefik.frontend.rule=\"Host:${_hosts};PathPrefix: /data,/logout,/session,/upload,/mail,/account,/admin,/jet\"",
       "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
     ],
     env                   => [
@@ -163,6 +177,21 @@ class dashboard::app (
     execstart   => '/usr/local/bin/dashboard-update',
   }
   -> service {'dashboard-update':
+    enable => true,
+  }
+
+  file { '/usr/local/bin/dashboard-frontend-update':
+    content => epp('dashboard/dashboard-frontend-update.sh', {
+      image_tag=>$image_tag
+    }),
+    mode    => '0755',
+  }
+  -> systemd_file::service { 'dashboard-frontend-update':
+    description => 'Update dashboard frontend container',
+    type        => 'oneshot',
+    execstart   => '/usr/local/bin/dashboard-frontend-update',
+  }
+  -> service {'dashboard-frontend-update':
     enable => true,
   }
 
