@@ -180,6 +180,21 @@ class dashboard::app (
     enable => true,
   }
 
+  file { '/usr/local/bin/dashboard-frontend-update':
+    content => epp('dashboard/dashboard-frontend-update.sh', {
+      image_tag=>$image_tag
+    }),
+    mode    => '0755',
+  }
+  -> systemd_file::service { 'dashboard-frontend-update':
+    description => 'Update dashboard frontend container',
+    type        => 'oneshot',
+    execstart   => '/usr/local/bin/dashboard-frontend-update',
+  }
+  -> service {'dashboard-frontend-update':
+    enable => true,
+  }
+
   if $auto_update_interval {
     systemd_file::timer { 'dashboard-update':
       on_boot_sec          => $auto_update_interval,

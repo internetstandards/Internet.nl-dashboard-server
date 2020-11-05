@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# update dashboard frontend
+
+if ! test "$(whoami)" == "root";then
+  echo "Error: must run as root! Login as root user or use sudo: sudo su -"
+  exit 1
+fi
+
+# exit on every error
+set -e
+
+image="internetstandards/dashboard-static:<%= $image_tag %>"
+
+# save current image as rollback
+/usr/bin/docker tag "${image}" "${image/<%= $image_tag %>/<%= $image_tag %>-1}"
+
+sha="$(cat /etc/dashboard-static-sha 2>/dev/null || true)"
+
+echo "Pulling in new image"
+/usr/bin/docker pull "${image}"
+echo
+
+newsha="$(docker image ls $image -q)"
+
+if [[ "$sha" = "$newsha" ]]; then
+    echo "Image sha has not changed, not continuing update!"
+    exit 0
+fi
+
+echo "New image with sha ${newsha}, updating"
+
+echo "Restarting frontend"
+systemctl stop docker-dashboard-static\*.service
+systemctl start docker-dashboard-static\*.service
+echo
+
+# wait just a little after restart to not get a false positive on
+# waiting for the container to be up
+sleep 3
+
+# wait for container to be available
+timeout 10 /bin/sh -c 'while ! docker inspect dashboard-static >/dev/null;do sleep 1;done'
+
+# wait for app to be available
+timeout 30 /bin/sh -c 'while ! curl -s $(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" dashboard):80 >/dev/null ;do sleep 1; done'
+
+# show container startus after deploy
+docker ps
+echo
+
+echo "$newsha" > /etc/dashboard-static-sha
+
+echo "Deploy complete!"
+echo
