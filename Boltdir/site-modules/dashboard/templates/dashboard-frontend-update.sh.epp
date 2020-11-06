@@ -31,8 +31,8 @@ fi
 echo "New image with sha ${newsha}, updating"
 
 echo "Restarting frontend"
-systemctl stop docker-dashboard-static\*.service
-systemctl start docker-dashboard-static\*.service
+systemctl stop docker-dashboard-static.service
+systemctl start docker-dashboard-static.service
 echo
 
 # wait just a little after restart to not get a false positive on
@@ -43,7 +43,7 @@ sleep 3
 timeout 10 /bin/sh -c 'while ! docker inspect dashboard-static >/dev/null;do sleep 1;done'
 
 # wait for app to be available
-timeout 30 /bin/sh -c 'while ! curl -s $(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" dashboard):80 >/dev/null ;do sleep 1; done'
+timeout 30 /bin/sh -c 'while ! curl -s $(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" dashboard-static):80 >/dev/null ;do sleep 1; done'
 
 # show container startus after deploy
 docker ps
