@@ -56,7 +56,7 @@ class dashboard::app (
       'traefik.enable=true',
       'traefik.frontend.priority=20',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.frontend.rule=\"Host:${_hosts};PathPrefix: /data,/logout,/session,/upload,/mail,/account,/admin,/jet,/static\"",
+      "traefik.frontend.rule=\"Host:${_hosts};PathPrefix: /data,/logout,/session,/upload,/mail,/account,/admin,/jet,/static_frontend,/static\"",
       "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
     ],
     env                   => [
