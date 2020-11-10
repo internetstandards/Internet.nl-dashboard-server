@@ -49,15 +49,15 @@ class dashboard::app (
 
   # all paths that should be routed to Django dynamic backend
   $dynamic_content_paths = [
-    '/data',
+    '/account/',
+    '/admin/',
+    '/data/',
+    '/jet/',
     '/logout',
-    '/session',
-    '/upload',
-    '/mail',
-    '/account',
-    '/admin',
-    '/jet',
-    '/static',
+    '/mail/',
+    '/session/',
+    '/static/',
+    '/upload/',
   ]
 
   ::docker::run { 'dashboard':
