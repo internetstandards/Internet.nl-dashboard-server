@@ -29,7 +29,7 @@ promote_staging_to_live:
 	docker push internetstandards/dashboard:live
 
 update_staging update_live: update_%:
-	${bolt} command run "/usr/local/bin/dashboard-update" -n $*
+	${bolt} command run "/usr/local/bin/dashboard-update" --targets $*
 
 # Spin up and provision local VM for testing
 lab: labhost apply_lab
@@ -45,24 +45,24 @@ test_inspec: | ${inspec}
 		-i .vagrant/machines/default/virtualbox/private_key
 
 # Apply server configuration to nodes
-apply_lab apply_staging apply_live apply_all: apply_%: Boltdir/modules/ | ${bolt}
-	${bolt} plan --verbose run dashboard::server --nodes $* ${args}
+apply_lab apply_staging apply_live apply_all: apply_%: Boltdir/.modules/ | ${bolt}
+	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
 
-plan_lab plan_staging plan_live plan_all: plan_%: Boltdir/modules/ | ${bolt}
-	${bolt} plan --verbose run dashboard::server --nodes $* --params='{"noop": true}' ${args}
+plan_lab plan_staging plan_live plan_all: plan_%: Boltdir/.modules/ | ${bolt}
+	${bolt} apply --noop --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
 
 # Development workflow
 fix: .make.fix
-.make.fix: $(shell find Boltdir/site-modules/ -name *.pp) | ${puppet-lint}
-	${puppet-lint} --fix Boltdir/site-modules
+.make.fix: $(shell find Boltdir/modules/ -name *.pp) | ${puppet-lint}
+	${puppet-lint} --fix Boltdir/modules
 	@touch $@
 
 check: .make.check
-.make.check: $(shell find Boltdir/site-modules/ -name *.pp)
-	${puppet-lint} Boltdir/site-modules
+.make.check: $(shell find Boltdir/modules/ -name *.pp)
+	${puppet-lint} Boltdir/modules
 
-Boltdir/modules/: Boltdir/Puppetfile | ${bolt}
-	${bolt} puppetfile install
+Boltdir/.modules/: Boltdir/Puppetfile Boltdir/bolt-project.yaml| ${bolt}
+	${bolt} module install
 	@touch $@
 
 # Install dependencies
@@ -98,7 +98,7 @@ clean:
 	rm -rf .make.*
 
 mrproper: destroy_vm clean
-	rm -rf Boltdir/modules/
+	rm -rf Boltdir/.modules/
 
 destroy_lab:
 	-vagrant destroy -f

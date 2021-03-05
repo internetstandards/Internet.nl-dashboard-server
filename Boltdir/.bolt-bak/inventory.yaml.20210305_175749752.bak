@@ -1,0 +1,17 @@
+nodes:
+  - name: dashboard.internet.nl
+    alias: live
+    vars:
+      env: live
+  - name: acc.dashboard.internet.nl
+    alias: staging
+    vars:
+      env: staging
+  - name: 172.30.1.5
+    alias: lab
+    vars:
+      env: lab
+    config:
+      ssh:
+        user: vagrant
+        private-key: .vagrant/machines/default/virtualbox/private_key
