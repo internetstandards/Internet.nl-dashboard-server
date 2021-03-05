@@ -21,7 +21,7 @@ echo "Pulling in new image"
 /usr/bin/docker pull "${image}"
 echo
 
-newsha="$(docker image ls internetstandards/dashboard:latest -q)"
+newsha="$(docker image ls "${image}" -q)"
 
 if [[ "$sha" = "$newsha" ]]; then
     echo "Image sha has not changed, not continuing update!"
