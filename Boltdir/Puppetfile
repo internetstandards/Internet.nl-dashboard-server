@@ -1,34 +1,36 @@
-# versions pinned to latest stable at time of adding, unless otherwise noticed
-mod 'puppetlabs-stdlib', '6.0.0'
-mod 'puppetlabs-apt', '7.0.1'
-mod 'puppet-unattended_upgrades', '4.0.0'
+# This Puppetfile is managed by Bolt. Do not edit.
+# For more information, see https://pup.pt/bolt-modules
 
-mod 'puppetlabs-ntp', '8.0.0'
-mod 'saz-ssh', '5.0.0'
-mod 'puppetlabs-concat', '6.0.0'
+# The following directive installs modules to the managed moduledir.
+moduledir '.modules'
 
-mod 'saz/sudo', '6.0.0'
-mod 'puppetlabs/firewall', '2.0.0'
-
-mod 'puppetlabs/accounts', '4.1.0'
-mod 'puppetlabs/translate', '1.2.0'
-
-mod 'puppetlabs/docker', '3.1.0'
-
-mod 'example42-network', '3.5.1'
-
+mod 'swap_file',
+  git: 'https://github.com/petems/petems-swap_file.git',
+  ref: 'b1dc3fc0254149aabbbbafd82e83702a2a38092f'
+mod 'eyp/eyplib', '0.1.24'
+mod 'systemd_file',
+  git: 'https://github.com/aequitas/eyp-systemd',
+  ref: '5c519c668c516430ca580b1ef5312b56f9871728'
+mod 'puppet/archive', '4.6.0'
+mod 'camptocamp/systemd', '2.12.0'
+mod 'puppet/prometheus', '11.0.0'
 mod 'thias/sysctl', '1.0.6'
-
-mod 'puppet/prometheus', '6.4.0'
-mod 'camptocamp-systemd', '2.6.0'
-mod 'puppet-archive', '4.0.0'
-
-mod 'aequitas/systemd_file',
-  :git => 'http://github.com/aequitas/eyp-systemd',
-  :branch => 'master'
-mod 'eyp/eyplib', '0.1.16'
-
-mod 'petems/swap_file',
-  # resolve deprecation warnings
-  :git => 'https://github.com/petems/petems-swap_file.git',
-  :tag => 'v4.0.3'
+mod 'example42/network', '3.3.7'
+mod 'puppetlabs/docker', '3.1.0'
+mod 'puppetlabs/translate', '2.2.0'
+mod 'puppetlabs/accounts', '7.0.0'
+mod 'puppetlabs/firewall', '3.0.0'
+mod 'saz/sudo', '6.0.0'
+mod 'puppetlabs/concat', '7.0.0'
+mod 'saz/ssh', '2.9.1'
+mod 'puppetlabs/ntp', '9.0.0'
+mod 'puppet/unattended_upgrades', '5.1.0'
+mod 'puppetlabs/apt', '7.7.1'
+mod 'puppetlabs/stdlib', '5.2.0'
+mod 'puppetlabs/powershell', '5.0.0'
+mod 'puppetlabs/reboot', '4.0.0'
+mod 'puppetlabs/mount_core', '1.0.4'
+mod 'herculesteam/augeasproviders_sysctl', '2.6.0'
+mod 'herculesteam/augeasproviders_core', '2.6.0'
+mod 'puppetlabs/inifile', '4.4.0'
+mod 'puppetlabs/pwshlib', '0.8.0'
