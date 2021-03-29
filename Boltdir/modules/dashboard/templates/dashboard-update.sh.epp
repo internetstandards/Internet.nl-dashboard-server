@@ -31,8 +31,7 @@ fi
 echo "New image with sha ${newsha}, updating"
 
 echo "Restarting app & worker"
-systemctl stop docker-dashboard\*.service
-systemctl start docker-dashboard\*.service
+systemctl restart docker-dashboard\*.service
 echo
 
 # wait just a little after restart to not get a false positive on
