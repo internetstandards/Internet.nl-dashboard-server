@@ -57,6 +57,7 @@ class base (
       # improve ssh server security
       'PasswordAuthentication' => no,
       'PermitRootLogin'        => no,
+      'DebianBanner'           => no,
     }
   }
 

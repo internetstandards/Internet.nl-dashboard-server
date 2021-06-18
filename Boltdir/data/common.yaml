@@ -10,3 +10,15 @@ accounts::user_list:
     groups: [users, sudo]
     sshkeys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDSD/TFYNq8V/RofrxLZWiPpdM/bj3b6vto+oRhfAb+4gsfsyxbrpETvHKdahCiJTZA+jheJQdaS2IWkrpZw1sCV0pSMcD6aZJWaDomfY2wNkrNs69mDzIL3HCsqUOVft5Md46Uh21+2vLIFgPLLrn58wOBszCK5DFTTQ9VrAirpwsaZ/rJj1iFwd+35MJVDe6K5LDF1tVEJl4MdqOs2Yhi25Zuz/ynP7zeF6420arqbbXjlSIDHbTjHJ54rBvDHqhg1cuYN4CGc3Fx7NTHfSYX4tlUvVS0EDLcNXWN+QlU4EI7qXHLjGastc7UqnLc4oFivQUOjlVFizF+hghb14MFYrAegTbzdS4kAROXLv/SVr360SVXfHdL2I3AE5oC9/IEsDXiWHEPZv/OX2t/reuCkt3hIZ4MQRZyXsO5TaDrJb8mnVIpbXOGrzlQ0Eec5IvEVotz0wLxK3zOk/Hs0oTOxpbryg9j5iMBQ2CyXBR3Er0YkPeuWjj3YMNbO33yaaER+EZXdg/cfYnuowM0wGXjYwmASTzNX4CDT1VjxS3H3V6+wMxM9aNmk+kFumGtW8b9VQNC55hokK4QeCteBv2bS99+Vnki0MfGI+1H1ljviJrXJ8EeYmY15CgPRtjYPiHRZdCuLTRR//4ZaZMbCussvOlGAxZ05LcIC5fiPmiHvQ== stitch
+
+base::firewall::admin_ip_whitelist:
+  iptables:
+    # johan
+    - "86.86.15.106/32"
+    - "37.34.56.243/32"
+    # stitch
+    - "84.27.0.128/32"
+    - "149.210.226.68/32"
+    # monitoring
+    - "162.55.63.10/32"
+  ip6tables: []

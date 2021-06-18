@@ -32,6 +32,8 @@ class dashboard::app (
     "Content-Security-Policy-Reporting-Only:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
     # pay respect
     'X-Clacks-Overhead:GNU Terry Pratchett',
+    # don't expose version info
+    'server:',
   ], '||')
 
   ::docker::run { 'dashboard-static':

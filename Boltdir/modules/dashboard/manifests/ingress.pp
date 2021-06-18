@@ -40,7 +40,8 @@ class dashboard::ingress {
 
   File['/etc/traefik/traefik.toml']
   ~> ::docker::run { 'traefik':
-    image                 => 'traefik:latest',
+    # Traefik 2.x configuration is not backwards compatible, sticking to 1.7 for now.
+    image                 => 'traefik:1.7',
     systemd_restart       => always,
     volumes               => [
       '/etc/traefik/:/etc/traefik/',
@@ -66,6 +67,7 @@ class dashboard::ingress {
       'traefik.enable=true',
       'traefik.frontend.priority=1',
       'traefik.frontend.rule=Path:/',
+      'traefik.frontend.headers.customResponseHeaders=server:',
       'traefik.port=80',
     ],
     health_check_interval => 60,

@@ -1,6 +1,7 @@
 # default firewall rules
 define base::firewall::default_rules (
   $provider = $title,
+  $admin_ip_whitelist,
 ) {
   $icmp = $provider ? {
     iptables => icmp,
@@ -36,7 +37,14 @@ define base::firewall::default_rules (
     action   => 'accept',
     provider => $provider,
   }
-  -> firewall { "010 Allow inbound SSH (${provider})":
+  -> firewall_multi { "010 SSH admin whitelist (${provider})":
+    source   => $admin_ip_whitelist[$provider],
+    dport    => 22,
+    proto    => tcp,
+    action   => accept,
+    provider => $provider,
+  }
+  -> firewall { "011 Allow inbound SSH (${provider})":
     dport    => 22,
     proto    => tcp,
     action   => accept,
