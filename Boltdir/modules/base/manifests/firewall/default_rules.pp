@@ -44,12 +44,6 @@ define base::firewall::default_rules (
     action   => accept,
     provider => $provider,
   }
-  -> firewall { "011 Allow inbound SSH (${provider})":
-    dport    => 22,
-    proto    => tcp,
-    action   => accept,
-    provider => $provider,
-  }
   -> firewall { "999 drop all (${provider})":
     proto    => 'all',
     action   => 'drop',
