@@ -2,11 +2,6 @@
 
 This repository contains infrastructure and server configuration for the Internet.nl Dashboard application.
 
-## Prerequisites
-
-Puppetlabs Bolt:
-https://github.com/puppetlabs/bolt/blob/main/documentation/bolt_installing.md
-
 
 ## Applying server configuration on live servers
 
