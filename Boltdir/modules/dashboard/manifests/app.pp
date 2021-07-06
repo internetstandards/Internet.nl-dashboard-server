@@ -114,7 +114,7 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command               => 'celery_dashboard worker -Q storage,celery,isolated -l debug',
+    command               => 'celery_dashboard worker -Q storage,celery,isolated',
   }
 
   ::docker::run { 'dashboard-worker-reporting':
@@ -132,7 +132,7 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command               => 'celery_dashboard worker -Q reporting -l debug',
+    command               => 'celery_dashboard worker -Q reporting',
   }
 
   ::docker::run { 'dashboard-worker-scanning':
@@ -150,7 +150,7 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command               => 'celery_dashboard worker -Q ipv4,ipv6,4and6,internet -l debug',
+    command               => 'celery_dashboard worker -Q ipv4,ipv6,4and6,internet',
   }
 
   ::docker::run { 'dashboard-scheduler':
