@@ -113,6 +113,7 @@ class dashboard::app (
       'DB_HOST=db',
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard worker -Q storage,celery,isolated',
   }
@@ -131,6 +132,7 @@ class dashboard::app (
       'DB_HOST=db',
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard worker -Q reporting',
   }
@@ -149,6 +151,7 @@ class dashboard::app (
       'DB_HOST=db',
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard worker -Q ipv4,ipv6,4and6,internet',
   }
@@ -167,6 +170,7 @@ class dashboard::app (
       'DB_HOST=db',
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard beat -l info --pidfile=/var/tmp/celerybeat.pid',
   }
@@ -184,6 +188,7 @@ class dashboard::app (
       'POSTGRES_DB=dashboard',
       'POSTGRES_USER=dashboard',
       'POSTGRES_PASSWORD=dashboard',
+      "SENTRY_DSN=${sentry_dsn}",
     ],
     links                 => [
       'db:db',
