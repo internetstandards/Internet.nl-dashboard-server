@@ -70,7 +70,8 @@ ifeq ($(shell uname -s),Darwin)
 ${vagrant} ${virtualbox}:
 	brew cask install ${@F}
 ${bolt}:
-	brew cask install puppetlabs/puppet/puppet-bolt
+	brew tap puppetlabs/puppet
+	brew install --cask puppet-bolt
 ${puppet-lint}:
 	brew tap rockyluke/devops
 	brew install puppet-lint
