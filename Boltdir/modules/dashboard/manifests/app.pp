@@ -114,7 +114,43 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       'C_FORCE_ROOT=1',
     ],
-    command               => 'celery_dashboard worker -Q storage,celery,reporting,ipv4,ipv6,4and6,internet,isolated -l debug',
+    command               => 'celery_dashboard worker -Q storage,celery,isolated -l debug',
+  }
+
+  ::docker::run { 'dashboard-worker-reporting':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    env                   => [
+      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
+      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      'ALLOWED_HOSTS=*',
+      'DJANGO_DATABASE=production',
+      'DB_ENGINE=postgresql_psycopg2',
+      'DB_HOST=db',
+      'BROKER=redis://broker:6379/0',
+      'C_FORCE_ROOT=1',
+    ],
+    command               => 'celery_dashboard worker -Q reporting -l debug',
+  }
+
+  ::docker::run { 'dashboard-worker-scanning':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    env                   => [
+      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
+      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      'ALLOWED_HOSTS=*',
+      'DJANGO_DATABASE=production',
+      'DB_ENGINE=postgresql_psycopg2',
+      'DB_HOST=db',
+      'BROKER=redis://broker:6379/0',
+      'C_FORCE_ROOT=1',
+    ],
+    command               => 'celery_dashboard worker -Q ipv4,ipv6,4and6,internet -l debug',
   }
 
   ::docker::run { 'dashboard-scheduler':
