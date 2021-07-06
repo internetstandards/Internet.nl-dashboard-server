@@ -6,8 +6,6 @@ dashboard::app::image_tag: live
 base::ipv6_address: 2a01:7c8:aab1:2c::1/48
 base::ipv6_gateway: 2a01:7c8:aab1::1
 
-dashboard::app::sentry_dsn: "https://688390f84c5e49f886113c3e03381157@sentry.io/1487534"
-
 # additional domain name for uptimerobot ipv6 http check
 dashboard::hosts:
   - ipv6.dashboard.internet.nl

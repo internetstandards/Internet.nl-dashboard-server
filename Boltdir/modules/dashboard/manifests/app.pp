@@ -3,6 +3,8 @@ class dashboard::app (
   $image_tag = latest,
   $sentry_dsn = undef,
   $auto_update_interval = undef,
+  $secret_key,
+  $field_encryption_key,
 ) {
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',
@@ -75,8 +77,8 @@ class dashboard::app (
       "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
     ],
     env                   => [
-      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
       'ALLOWED_HOSTS=*',
       'UWSGI_HARAKIRI=3600',
       'DJANGO_DATABASE=production',
@@ -107,8 +109,8 @@ class dashboard::app (
     net                   => dashboard,
     health_check_interval => 60,
     env                   => [
-      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
       'ALLOWED_HOSTS=*',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
@@ -127,8 +129,8 @@ class dashboard::app (
     net                   => dashboard,
     health_check_interval => 60,
     env                   => [
-      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
       'ALLOWED_HOSTS=*',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
@@ -147,8 +149,8 @@ class dashboard::app (
     net                   => dashboard,
     health_check_interval => 60,
     env                   => [
-      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
       'ALLOWED_HOSTS=*',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
@@ -167,8 +169,8 @@ class dashboard::app (
     net                   => dashboard,
     health_check_interval => 60,
     env                   => [
-      'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
-      'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
       'ALLOWED_HOSTS=*',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
