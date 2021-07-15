@@ -3,3 +3,4 @@
 Boltdir/.*
 .make.*
 .rerun.json
+.idea/*
