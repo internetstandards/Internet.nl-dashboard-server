@@ -78,6 +78,7 @@ class dashboard::app (
       'SECRET_KEY=saldkfjklsdajfklsdajflksadjflkj',
       'FIELD_ENCRYPTION_KEY=rYFZXHmpDNzyLKkHT-mfK_VR2vbOmrLkZaBwsNV8CQA=',
       'ALLOWED_HOSTS=*',
+      'UWSGI_HARAKIRI=3600',
       'DJANGO_DATABASE=production',
       'DB_ENGINE=postgresql_psycopg2',
       'DB_HOST=db',
