@@ -2,6 +2,28 @@
 
 This repository contains infrastructure and server configuration for the Internet.nl Dashboard application.
 
+## TL;DR
+Latest image is made during CI steps.
+
+Docker images are here: https://hub.docker.com/r/internetstandards/dashboard/tags
+
+### To production:
+```shell
+make promote_latest_to_staging
+make promote_staging_to_live
+make update_live
+```
+
+or 
+```shell
+make promote_latest_to_staging
+make promote_staging_to_live
+
+ssh dashboard.internet.nl
+sudo su -
+/usr/local/bin/dashboard-update
+```
+
 
 ## Applying server configuration on live servers
 
