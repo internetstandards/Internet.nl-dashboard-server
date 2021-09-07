@@ -56,4 +56,6 @@ class dashboard (
 
   # application, queue, database
   class { '::dashboard::app': }
+
+  class { '::dashboard::monitoring': }
 }

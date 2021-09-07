@@ -1,10 +1,10 @@
 # dashboard app, queue and database
 class dashboard::app (
+  $secret_key,
+  $field_encryption_key,
   $image_tag = latest,
   $sentry_dsn = undef,
   $auto_update_interval = undef,
-  $secret_key,
-  $field_encryption_key,
 ) {
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',

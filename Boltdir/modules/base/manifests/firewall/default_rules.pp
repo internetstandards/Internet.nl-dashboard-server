@@ -1,7 +1,7 @@
 # default firewall rules
 define base::firewall::default_rules (
-  $provider = $title,
   $admin_ip_whitelist,
+  $provider = $title,
 ) {
   $icmp = $provider ? {
     iptables => icmp,
