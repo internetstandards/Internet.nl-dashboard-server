@@ -12,47 +12,50 @@ class dashboard::app (
   }
   -> ::Docker::Run['dashboard']
 
-  $_hosts = join($dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}", ',')
+  $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}"
 
-  $headers = join([
+  $hosts = join(suffix(prefix($_hosts, '"'), '"'),", ")
+
+  $headers = [
     # tell browsers to only accept this site over https in the future
-    'Strict-Transport-Security:max-age=31536000;includeSubdomains',
+    'Strict-Transport-Security="max-age=31536000;includeSubdomains"',
     # deny browsers from framing this website
-    'X-Frame-Options:DENY',
+    'X-Frame-Options=DENY',
     # don't let browser guess content types
-    'X-Content-Type-Options:nosniff',
+    'X-Content-Type-Options=nosniff',
     # prevent browser from rendering page if it detects XSS attack
-    'X-XSS-Protection:1; mode=block',
+    'X-XSS-Protection="1;mode=block"',
     # tell browser to deny any form of framing
-    'X-Frame-Options:SAMEORIGIN',
+    'X-Frame-Options=SAMEORIGIN',
     # don't send any referrer info to third parties
-    'Referrer-Policy:same-origin',
+    'Referrer-Policy=same-origin',
     # CSP generated with Mozilla Laboratory after clicking through the site: https://addons.mozilla.org/en-US/firefox/addon/laboratory-by-mozilla/
     # See https://github.com/internetstandards/Internet.nl-dashboard/issues/53
-    "Content-Security-Policy:default-src 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; img-src 'self' https://matomo.internet.nl/ data: https://www.internet.nl; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://matomo.internet.nl/piwik.js; style-src 'self' 'unsafe-inline';",
+    "Content-Security-Policy=\"default-src 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; img-src 'self' https://matomo.internet.nl/ data: https://www.internet.nl; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://matomo.internet.nl/piwik.js; style-src 'self' 'unsafe-inline';\"",
     # only report on sources that would be disallowed by CSP, as currently there is no clear best configuration for our case
-    "Content-Security-Policy-Reporting-Only:default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';",
+    "Content-Security-Policy-Reporting-Only=\"default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';\"",
     # pay respect
-    'X-Clacks-Overhead:GNU Terry Pratchett',
+    'X-Clacks-Overhead="GNU Terry Pratchett"',
     # don't expose version info
-    'server:',
-  ], '||')
+    'server=',
+  ]
 
   ::docker::run { 'dashboard-static':
     image                 => "internetstandards/dashboard-static:${image_tag}",
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
-    labels                => [
+    labels                => concat([
       'traefik.enable=true',
-      'traefik.frontend.priority=10',
-      "traefik.frontend.rule=Host:${_hosts}",
-      "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
-    ],
+      "traefik.http.routers.dashboard-static.rule='Host(${hosts})'",
+      'traefik.http.routers.dashboard-static.priority=10',
+      'traefik.http.routers.dashboard-static.tls=true',
+      "traefik.http.routers.dashboard-static.tls.certResolver=letsencrypt",
+    ], prefix($headers, "traefik.http.middlewares.dashboard-static.headers.customresponseheaders.")),
   }
 
   # all paths that should be routed to Django dynamic backend
-  $dynamic_content_paths = [
+  $dynamic_content_paths = join(suffix(prefix([
     '/account/',
     '/admin/',
     '/data/',
@@ -62,20 +65,21 @@ class dashboard::app (
     '/session/',
     '/static/',
     '/upload/',
-  ]
+  ], '"'), '"'), ', ')
 
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
-    labels                => [
+    labels                => concat([
       'traefik.enable=true',
-      'traefik.frontend.priority=20',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.frontend.rule=\"Host:${_hosts};PathPrefix:${join($dynamic_content_paths,',')}\"",
-      "\"traefik.frontend.headers.customResponseHeaders=${headers}\"",
-    ],
+      "traefik.http.routers.dashboard.rule='Host(${hosts}) && PathPrefix(${dynamic_content_paths})'",
+      'traefik.http.routers.dashboard.priority=20',
+      'traefik.http.routers.dashboard.tls=true',
+      "traefik.http.routers.dashboard.tls.certResolver=letsencrypt",
+    ], prefix($headers, "traefik.http.middlewares.dashboard.headers.customresponseheaders.")),
     env                   => [
       "SECRET_KEY=${secret_key}",
       "FIELD_ENCRYPTION_KEY=${field_encryption_key}",

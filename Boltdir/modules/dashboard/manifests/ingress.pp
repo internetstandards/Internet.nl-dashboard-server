@@ -3,8 +3,8 @@ class dashboard::ingress {
   file { '/etc/traefik/':
     ensure => directory,
   }
-  file { '/etc/traefik/traefik.toml':
-    content => epp('dashboard/traefik.toml', {
+  file { '/etc/traefik/traefik.yaml':
+    content => epp('dashboard/traefik.yaml', {
       bofh_email => $dashboard::bofh_email,
       domain     => $dashboard::domain,
       subdomain  => $dashboard::subdomain,
@@ -38,10 +38,10 @@ class dashboard::ingress {
     ]
   }
 
-  File['/etc/traefik/traefik.toml']
+  File['/etc/traefik/traefik.yaml']
   ~> ::docker::run { 'traefik':
     # Traefik 2.x configuration is not backwards compatible, sticking to 1.7 for now.
-    image                 => 'traefik:1.7',
+    image                 => 'traefik:2.5',
     systemd_restart       => always,
     volumes               => [
       '/etc/traefik/:/etc/traefik/',
@@ -65,10 +65,9 @@ class dashboard::ingress {
     ],
     labels                => [
       'traefik.enable=true',
-      'traefik.frontend.priority=1',
-      'traefik.frontend.rule=Path:/',
-      'traefik.frontend.headers.customResponseHeaders=server:',
-      'traefik.port=80',
+      'traefik.http.routers.dashboard-static.priority=1',
+      "traefik.http.routers.dashboard-static.rule='Path(\"/\")'",
+      "traefik.http.middlewares.dashboard-static.headers.customresponseheaders.server=",
     ],
     health_check_interval => 60,
   }

@@ -1,0 +1,34 @@
+accessLog: {}
+log:
+  level: "INFO"
+
+providers:
+  docker:
+    exposedByDefault: false
+
+api:
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: <%= $bofh_email %>
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        entryPoint: web
+      <% if $le_staging { -%>
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      <% } -%>
+
+http:
+  middlewares:
+    clacks:
+      headers:
+        customResponseHeaders:
+          X-Clacks-Overhead: "GNU Terry Pratchett"
