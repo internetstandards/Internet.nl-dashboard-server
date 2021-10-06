@@ -91,10 +91,27 @@ class base (
       ipaddress => $ipv6_address,
       gateway   => $ipv6_gateway,
     }
-    # accepting router advertisements causes the static default gateway
-    # to be dropped after a while
+    # fix ipv6 autoconf for because Docker enables forwarding, but this system
+    # should not be treated as a ipv6 router
+    # https://www.mattb.net.nz/blog/2011/05/12/linux-ignores-ipv6-router-adverti
+    # sements-when-forwarding-is-enabled/
     sysctl { 'net.ipv6.conf.all.accept_ra':
-      value => '0',
+      value => '2',
+    }
+    sysctl { 'net.ipv6.conf.all.autoconf':
+      value => '1',
+    }
+    sysctl { 'net.ipv6.conf.default.accept_ra':
+      value => '2',
+    }
+    sysctl { 'net.ipv6.conf.default.autoconf':
+      value => '1',
+    }
+    sysctl { "net.ipv6.conf.${::networking['primary']}.accept_ra":
+      value => '2',
+    }
+    sysctl { "net.ipv6.conf.${::networking['primary']}.autoconf":
+      value => '1',
     }
   }
 }

@@ -23,7 +23,7 @@ class dashboard::monitoring (
       'traefik.http.routers.monitoring.tls=true',
       "traefik.http.routers.monitoring.tls.certResolver=letsencrypt",
       'traefik.http.routers.monitoring.middlewares=admin-whitelist-monitoring,monitoring-headers',
-    ], prefix($headers, "traefik.http.middlewares.monitoring.headers.customresponseheaders.")),
+    ], prefix($headers, "traefik.http.middlewares.monitoring-headers.headers.customresponseheaders.")),
 
     command               => join([
       '--path.rootfs=/host',

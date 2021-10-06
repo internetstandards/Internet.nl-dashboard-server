@@ -58,6 +58,7 @@ class dashboard::ingress {
     command               => 'python -m http.server 80',
     extra_parameters      => [
       '--workdir=/var/www/maintenance',
+      '--expose=80',
     ],
     systemd_restart       => always,
     volumes               => [
@@ -65,9 +66,10 @@ class dashboard::ingress {
     ],
     labels                => [
       'traefik.enable=true',
-      'traefik.http.routers.dashboard-static.priority=1',
-      "traefik.http.routers.dashboard-static.rule='Path(\"/\")'",
-      "traefik.http.middlewares.dashboard-static.headers.customresponseheaders.server=",
+      'traefik.http.routers.maintenance.priority=1',
+      "traefik.http.routers.maintenance.rule='Path(\"/\")'",
+      'traefik.http.routers.maintenance.middlewares=maintenance-headers',
+      "traefik.http.middlewares.maintenance-headers.headers.customresponseheaders.server=",
     ],
     health_check_interval => 60,
   }
