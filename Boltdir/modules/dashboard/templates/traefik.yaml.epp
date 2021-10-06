@@ -25,10 +25,3 @@ certificatesResolvers:
       <% if $le_staging { -%>
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       <% } -%>
-
-http:
-  middlewares:
-    clacks:
-      headers:
-        customResponseHeaders:
-          X-Clacks-Overhead: "GNU Terry Pratchett"

@@ -51,7 +51,8 @@ class dashboard::app (
       'traefik.http.routers.dashboard-static.priority=10',
       'traefik.http.routers.dashboard-static.tls=true',
       "traefik.http.routers.dashboard-static.tls.certResolver=letsencrypt",
-    ], prefix($headers, "traefik.http.middlewares.dashboard-static.headers.customresponseheaders.")),
+      "traefik.http.routers.dashboard-static.middlewares=dashboard-static-headers",
+    ], prefix($headers, "traefik.http.middlewares.dashboard-static-headers.headers.customresponseheaders.")),
   }
 
   # all paths that should be routed to Django dynamic backend
@@ -79,7 +80,8 @@ class dashboard::app (
       'traefik.http.routers.dashboard.priority=20',
       'traefik.http.routers.dashboard.tls=true',
       "traefik.http.routers.dashboard.tls.certResolver=letsencrypt",
-    ], prefix($headers, "traefik.http.middlewares.dashboard.headers.customresponseheaders.")),
+      "traefik.http.routers.dashboard.middlewares=dashboard-headers",
+    ], prefix($headers, "traefik.http.middlewares.dashboard-headers.headers.customresponseheaders.")),
     env                   => [
       "SECRET_KEY=${secret_key}",
       "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
