@@ -5,6 +5,8 @@ log:
 providers:
   docker:
     exposedByDefault: false
+  file:
+    filename: /etc/traefik/file-provider.yaml
 
 api:
   insecure: true
@@ -12,8 +14,29 @@ api:
 entryPoints:
   web:
     address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+      middlewares:
+        - security-headers@file
+        - clacks@file
   websecure:
     address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "<%= $subdomain %>.<%= $domain %>"
+            sans:
+              <%- $hosts.each |$host| { -%>
+              - <%= $host %>
+              <% } %>
+      middlewares:
+        - security-headers@file
+        - clacks@file
+
 
 certificatesResolvers:
   letsencrypt:

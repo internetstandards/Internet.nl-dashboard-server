@@ -13,6 +13,10 @@ class dashboard::ingress {
     }),
   }
 
+  file { '/etc/traefik/file-provider.yaml':
+    content => epp('dashboard/file-provider.yaml', {}),
+  }
+
   file { ['/var/www/', '/var/www/maintenance']:
     ensure => directory,
   }
@@ -38,7 +42,7 @@ class dashboard::ingress {
     ]
   }
 
-  File['/etc/traefik/traefik.yaml']
+  File['/etc/traefik/traefik.yaml', '/etc/traefik/file-provider.yaml']
   ~> ::docker::run { 'traefik':
     # Traefik 2.x configuration is not backwards compatible, sticking to 1.7 for now.
     image                 => 'traefik:2.5',
@@ -66,10 +70,9 @@ class dashboard::ingress {
     ],
     labels                => [
       'traefik.enable=true',
+      "traefik.http.routers.maintenance.rule='PathPrefix(\"/\")'",
       'traefik.http.routers.maintenance.priority=1',
-      "traefik.http.routers.maintenance.rule='Path(\"/\")'",
-      'traefik.http.routers.maintenance.middlewares=maintenance-headers',
-      "traefik.http.middlewares.maintenance-headers.headers.customresponseheaders.server=",
+      'traefik.http.routers.maintenance.entrypoints=websecure',
     ],
     health_check_interval => 60,
   }

@@ -15,15 +15,14 @@ class dashboard::monitoring (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
-    labels                => concat([
+    labels                => [
       'traefik.enable=true',
-      "traefik.http.middlewares.admin-whitelist-monitoring.ipwhitelist.sourcerange=${sourcerange}",
       "traefik.http.routers.monitoring.rule='Host(${hosts}) && PathPrefix(\"/metrics\")'",
       'traefik.http.routers.monitoring.priority=30',
-      'traefik.http.routers.monitoring.tls=true',
-      "traefik.http.routers.monitoring.tls.certResolver=letsencrypt",
-      'traefik.http.routers.monitoring.middlewares=admin-whitelist-monitoring,monitoring-headers',
-    ], prefix($headers, "traefik.http.middlewares.monitoring-headers.headers.customresponseheaders.")),
+      'traefik.http.routers.monitoring.entrypoints=websecure',
+      "traefik.http.middlewares.admin-whitelist-monitoring.ipwhitelist.sourcerange=${sourcerange}",
+      'traefik.http.routers.monitoring.middlewares=admin-whitelist-monitoring',
+    ],
 
     command               => join([
       '--path.rootfs=/host',
