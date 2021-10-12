@@ -26,6 +26,9 @@ entryPoints:
     address: ":443"
     http:
       tls:
+        options:
+          default:
+            minVersion: VersionTLS12
         certResolver: letsencrypt
         domains:
           - main: "<%= $subdomain %>.<%= $domain %>"
