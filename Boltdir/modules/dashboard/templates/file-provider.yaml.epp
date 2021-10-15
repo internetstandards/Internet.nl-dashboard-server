@@ -1,3 +1,9 @@
+# Configure minimal TLS versions for all TLS entrypoints.
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
 http:
   middlewares:
     security-headers:
