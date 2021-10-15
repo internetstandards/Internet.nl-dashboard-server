@@ -113,5 +113,14 @@ class base (
     sysctl { "net.ipv6.conf.${::networking['primary']}.autoconf":
       value => '1',
     }
+
+    # hack to make sure above accept_ra are reapplied after docker is started
+    # and has messed up everything IPv6
+    File['/etc/systemd/system/docker.service.d'] ->
+    file { '/etc/systemd/system/docker.service.d/ipv6-hack-fix.conf':
+      ensure  => present,
+      content => "[Service]\nExecStartPost=/sbin/sysctl --system\n",
+    }
+    ~> Exec['docker-systemd-reload-before-service']
   }
 }
