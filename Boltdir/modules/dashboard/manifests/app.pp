@@ -40,6 +40,8 @@ class dashboard::app (
     '/session/',
     '/static/',
     '/upload/',
+    '/security.txt',
+    '/.well-known/security.txt'
   ], '"'), '"'), ', ')
 
   ::docker::run { 'dashboard':
