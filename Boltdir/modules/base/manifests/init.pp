@@ -10,6 +10,8 @@ class base (
 
   class { '::accounts': }
 
+  class{ '::systemd': }
+
   # enable apt unattended security upgrades
   class { '::unattended_upgrades':
     # reboot outside of office hours if security updates require this
