@@ -21,4 +21,10 @@ base::firewall::admin_ip_whitelist:
     - "84.27.102.146/32"
     # monitoring
     - "162.55.63.10/32"
-  ip6tables: []
+  ip6tables:
+    # johan
+    - "2a02:a445:c805::/48"
+    - "2a01:7c8:aaad:c8::/48"
+
+systemd::journald_settings:
+  Storage: persistent
