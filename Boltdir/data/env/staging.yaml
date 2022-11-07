@@ -6,8 +6,9 @@ dashboard::app::image_tag: latest
 # how often to check for docker image update
 dashboard::app::auto_update_interval: 5min
 
+# explicitly set fixed IPv6 address bound to domain name, other IPv6 addresses
+# and gateway are obtained through RA
 base::ipv6_address: 2a01:7c8:aab2:3f::1/48
-base::ipv6_gateway: 2a01:7c8:aab2::1
 
 # additional domain name for uptimerobot ipv6 http check
 dashboard::hosts:
