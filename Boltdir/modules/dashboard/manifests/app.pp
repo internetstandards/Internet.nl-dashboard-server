@@ -202,6 +202,8 @@ class dashboard::app (
   systemd_file::service { 'dashboard-migrate':
     description => 'Run database migrations for dashboard application',
     type        => 'oneshot',
+    # override default 'multi-user.target' so this is not started at boot
+    wantedby    => [],
     execstart   => '/usr/local/bin/dashboard migrate',
   }
   -> service {'dashboard-migrate':
@@ -216,6 +218,8 @@ class dashboard::app (
   -> systemd_file::service { 'dashboard-update':
     description => 'Update dashboard application',
     type        => 'oneshot',
+    # override default 'multi-user.target' so this is not started at boot
+    wantedby    => [],
     execstart   => '/usr/local/bin/dashboard-update',
   }
   -> service {'dashboard-update':
@@ -231,6 +235,8 @@ class dashboard::app (
   -> systemd_file::service { 'dashboard-frontend-update':
     description => 'Update dashboard frontend container',
     type        => 'oneshot',
+    # override default 'multi-user.target' so this is not started at boot
+    wantedby    => [],
     execstart   => '/usr/local/bin/dashboard-frontend-update',
   }
   -> service {'dashboard-frontend-update':
