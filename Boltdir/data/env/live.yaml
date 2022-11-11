@@ -3,8 +3,9 @@ dashboard::domain: internet.nl
 dashboard::le_staging: false
 dashboard::app::image_tag: live
 
+# explicitly set fixed IPv6 address bound to domain name, other IPv6 addresses
+# and gateway are obtained through RA
 base::ipv6_address: 2a01:7c8:aab1:2c::1/48
-base::ipv6_gateway: 2a01:7c8:aab1::1
 
 # additional domain name for uptimerobot ipv6 http check
 dashboard::hosts:

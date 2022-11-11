@@ -81,6 +81,8 @@ class base (
   class {'network': }
 
   network::interface { $::networking['primary']:
+    auto => false,
+    allow_hotplug => true,
     enable_dhcp => true,
   }
 
@@ -91,7 +93,6 @@ class base (
       interface => $::networking['primary'],
       family    => inet6,
       ipaddress => $ipv6_address,
-      gateway   => $ipv6_gateway,
     }
     # fix ipv6 autoconf for because Docker enables forwarding, but this system
     # should not be treated as a ipv6 router
