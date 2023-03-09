@@ -25,6 +25,8 @@ base::firewall::admin_ip_whitelist:
     # johan
     - "2a02:a445:c805::/48"
     - "2a01:7c8:aaad:c8::/48"
+    # monitoring
+    - "2a01:4f8:1c1c:800d::/64"
 
 systemd::journald_settings:
   Storage: persistent

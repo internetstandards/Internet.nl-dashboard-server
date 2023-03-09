@@ -7,7 +7,7 @@ class dashboard::monitoring (
 
   $hosts = join(suffix(prefix($_hosts, '"'), '"'),", ")
 
-  $sourcerange = join($whitelist['iptables'], ",")
+  $sourcerange = join($whitelist['iptables'] + $whitelist['ip6tables'], ",")
 
   ::docker::run { 'monitoring':
     image                 => 'quay.io/prometheus/node-exporter',
