@@ -31,7 +31,7 @@ http:
           Referrer-Policy: same-origin
           # CSP generated with Mozilla Laboratory after clicking through the site: https://addons.mozilla.org/en-US/firefox/addon/laboratory-by-mozilla/
           # See https://github.com/internetstandards/Internet.nl-dashboard/issues/53
-          Content-Security-Policy: "default-src 'self'; connect-src 'self' https://matomo.internet.nl; script-src 'self' https://matomo.internet.nl; img-src 'self' data: https://matomo.internet.nl; frame-src 'none'; frame-ancestors 'none';"
+          Content-Security-Policy: "default-src 'self'; connect-src 'self' https://matomo.internet.nl; script-src 'self' https://matomo.internet.nl; img-src 'self' data: https://matomo.internet.nl; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
           # only report on sources that would be disallowed by CSP, as currently there is no clear best configuration for our case
           Content-Security-Policy-Reporting-Only: "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self';"
           # don't expose version info
