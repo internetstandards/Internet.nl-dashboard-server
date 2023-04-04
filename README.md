@@ -14,7 +14,7 @@ make promote_staging_to_live
 make update_live
 ```
 
-or 
+or
 ```shell
 make promote_latest_to_staging
 make promote_staging_to_live
@@ -77,6 +77,28 @@ Security patches are applied automatically every day. If a reboot is required (e
 To manually trigger an security hotfix and potential immediate reboot run:
 
     bolt plan run base::security_hotfix --nodes staging
+
+### Database upgrades
+
+When upgrading to a newer version of Postgres DB please use the following procedure:
+
+- On the staging server `acc.dashboard.internet.nl` (as root):
+
+        systemctl stop docker-db
+        cd /srv/dashboard
+        mv db db<OLD_VERSION>
+        docker run -ti --rm \
+          -v /srv/dashboard/db<OLD_VERSION>:/var/lib/postgresql/<OLD_VERSION>/data \
+          -v /srv/dashboard/db<NEW_VERSION>:/var/lib/postgresql/<NEW_VERSION>/data \
+          tianon/postgres-upgrade:<OLD_VERSION>-to-<NEW_VERSION>
+        mv db<NEW_VERSION> db
+
+- Update Postgresql Docker image version in `Boldir/modules/dashboard/manifests/app.pp`
+- Make a staging deployment (`make apply_staging`)
+- Verify functionality https://acc.dashboard.internet.nl/
+- Repeat for live
+
+See also: https://github.com/tianon/docker-postgres-upgrade
 
 ## Development compulsory reading
 
