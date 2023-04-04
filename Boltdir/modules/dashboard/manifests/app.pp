@@ -164,7 +164,7 @@ class dashboard::app (
   }
 
   ::docker::run { 'db':
-    image                 => 'postgres:11',
+    image                 => 'postgres:12',
     systemd_restart       => always,
     volumes               => [
       '/srv/dashboard/db/:/var/lib/postgresql/data',
