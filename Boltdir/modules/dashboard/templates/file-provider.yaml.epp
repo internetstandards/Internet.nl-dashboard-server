@@ -42,4 +42,5 @@ http:
           # pay respect
           X-Clacks-Overhead: "GNU Terry Pratchett"
 
-
+    compression:
+      compress: true

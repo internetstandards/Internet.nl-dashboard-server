@@ -36,6 +36,7 @@ entryPoints:
       middlewares:
         - security-headers@file
         - clacks@file
+        - compression@file
 
 
 certificatesResolvers:
@@ -47,3 +48,4 @@ certificatesResolvers:
       <% if $le_staging { -%>
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       <% } -%>
+
