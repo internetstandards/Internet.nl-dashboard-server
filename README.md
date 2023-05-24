@@ -82,6 +82,11 @@ To manually trigger an security hotfix and potential immediate reboot run:
 
 When upgrading to a newer version of Postgres DB please use the following procedure:
 
+- Before starting make sure there is enough disk space to contain a second copy of the current database:
+
+        df -h /srv/dashboard/
+        du -sch /srv/dashboard/db/
+
 - On the staging server `acc.dashboard.internet.nl` (as root):
 
         systemctl stop docker-db
