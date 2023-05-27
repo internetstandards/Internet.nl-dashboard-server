@@ -82,25 +82,23 @@ To manually trigger an security hotfix and potential immediate reboot run:
 
 When upgrading to a newer version of Postgres DB please use the following procedure:
 
-- Before starting make sure there is enough disk space to contain a second copy of the current database:
-
-        df -h /srv/dashboard/
-        du -sch /srv/dashboard/db/
-
 - On the staging server `acc.dashboard.internet.nl` (as root):
 
         systemctl stop docker-db
         cd /srv/dashboard
-        mv db db<OLD_VERSION>
+        mv db db_old
         docker run -ti --rm \
-          -v /srv/dashboard/db<OLD_VERSION>:/var/lib/postgresql/<OLD_VERSION>/data \
-          -v /srv/dashboard/db<NEW_VERSION>:/var/lib/postgresql/<NEW_VERSION>/data \
-          tianon/postgres-upgrade:<OLD_VERSION>-to-<NEW_VERSION>
-        mv db<NEW_VERSION> db
+          -e POSTGRES_INITDB_ARGS=-Udashboard \
+          -e PGDATAOLD=/var/lib/postgresql/db_old \
+          -e PGDATANEW=/var/lib/postgresql/db_new \
+          -v /srv/dashboard/:/var/lib/postgresql/ \
+          tianon/postgres-upgrade:<OLD_VERSION>-to-<NEW_VERSION> --link -U dashboard
+        mv db_new db
 
 - Update Postgresql Docker image version in `Boldir/modules/dashboard/manifests/app.pp`
 - Make a staging deployment (`make apply_staging`)
 - Verify functionality https://acc.dashboard.internet.nl/
+- Delete old database `rm -rf /srv/dashboard/db_old`
 - Repeat for live
 
 See also: https://github.com/tianon/docker-postgres-upgrade

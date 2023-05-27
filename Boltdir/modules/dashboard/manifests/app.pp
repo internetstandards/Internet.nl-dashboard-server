@@ -182,6 +182,8 @@ class dashboard::app (
       'db:db',
       'broker:broker',
     ],
+    # allow graceful shutdown of database
+    stop_wait_time => 60,
   }
 
   ::docker::run { 'broker':
