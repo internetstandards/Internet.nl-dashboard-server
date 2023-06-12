@@ -21,6 +21,9 @@ class dashboard::app (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
     labels                => [
       'traefik.enable=true',
       "traefik.http.routers.dashboard-static.rule='Host(${hosts})'",
@@ -49,6 +52,9 @@ class dashboard::app (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
     labels                => [
       'traefik.enable=true',
       # all dynamic content should be served by Django, otherwise fallback to static content
@@ -88,6 +94,9 @@ class dashboard::app (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
     env                   => [
       "SECRET_KEY=${secret_key}",
       "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
@@ -108,6 +117,9 @@ class dashboard::app (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
     env                   => [
       "SECRET_KEY=${secret_key}",
       "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
@@ -128,6 +140,9 @@ class dashboard::app (
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
     env                   => [
       "SECRET_KEY=${secret_key}",
       "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
