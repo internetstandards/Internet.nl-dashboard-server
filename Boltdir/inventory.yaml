@@ -18,5 +18,7 @@ targets:
   uri: 172.30.1.5
 config:
   ssh:
+    native-ssh: true
+    ssh-command: /usr/bin/ssh
     host-key-check: false
     run-as: root
