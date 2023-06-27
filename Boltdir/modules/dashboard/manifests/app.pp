@@ -49,6 +49,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -91,6 +92,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker':
     image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -114,6 +116,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker-reporting':
     image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -137,6 +140,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker-scanning':
     image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -160,6 +164,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-scheduler':
     image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -212,6 +217,7 @@ class dashboard::app (
   ::docker::run { ['worker', 'scheduler']:
     ensure => absent,
     image  => "internetstandards/dashboard:${image_tag}",
+    extra_parameters => ['--security-opt seccomp=unconfined'],
   }
 
   # scripts and services for application update and db migration
