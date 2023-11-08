@@ -112,7 +112,7 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     # for some reason redis tells us that kickoff3 exists, might be a glitch and that it's just kickoff...
-    command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4',
+    command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4,database_deprecate,database_deprecate3',
   }
 
   ::docker::run { 'dashboard-worker-reporting':
