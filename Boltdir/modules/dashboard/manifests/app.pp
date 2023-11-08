@@ -111,7 +111,8 @@ class dashboard::app (
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
-    command               => 'celery_dashboard worker -Q storage,celery,isolated',
+    # for some reason redis tells us that kickoff3 exists, might be a glitch and that it's just kickoff...
+    command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4',
   }
 
   ::docker::run { 'dashboard-worker-reporting':
