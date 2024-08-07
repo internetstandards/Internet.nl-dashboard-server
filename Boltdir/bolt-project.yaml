@@ -23,3 +23,6 @@ modules:
 - name: eyp/eyplib
 - git: https://github.com/petems/petems-swap_file.git
   ref: v4.0.3
+
+apply-settings:
+  show_diff: true

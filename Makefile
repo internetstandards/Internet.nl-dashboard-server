@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 
 # Set paths for binaries used
-bolt = /opt/puppetlabs/bin/bolt
+bolt ?= /opt/puppetlabs/bin/bolt
 
 ifeq ($(shell uname -s),Darwin)
 bin = /usr/local/bin
