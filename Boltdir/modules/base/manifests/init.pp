@@ -94,6 +94,16 @@ class base (
       family    => inet6,
       ipaddress => $ipv6_address,
     }
+
+    # workaround issue with IPv4 address being dropped because dhclient
+    # not being started due to failing dad on IPv6 when interface is brought up
+    # https://forums.debian.net/viewtopic.php?t=135218&start=15
+    concat::fragment { "interface-dad-fix":
+      target  => '/etc/network/interfaces',
+      content => 'dad-attempts 0',
+      order   => 99,
+    }
+
     # fix ipv6 autoconf for because Docker enables forwarding, but this system
     # should not be treated as a ipv6 router
     # https://www.mattb.net.nz/blog/2011/05/12/linux-ignores-ipv6-router-adverti
