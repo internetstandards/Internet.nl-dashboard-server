@@ -13,9 +13,14 @@ targets:
     env: lab
   config:
     ssh:
-      user: vagrant
-      private-key: ".vagrant/machines/default/virtualbox/private_key"
-  uri: 172.30.1.5
+      user:
+        _plugin: env_var
+        var: SSH_USER
+        default: root
+  uri:
+    _plugin: env_var
+    var: LAB_URI
+    default: localhost
 config:
   ssh:
     native-ssh: true

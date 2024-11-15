@@ -81,8 +81,8 @@ class base (
   class {'network': }
 
   network::interface { $::networking['primary']:
-    auto => false,
-    allow_hotplug => true,
+    auto => true,
+    allow_hotplug => false,
     enable_dhcp => true,
   }
 
