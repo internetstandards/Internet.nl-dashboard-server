@@ -16,7 +16,7 @@ modules:
 - name: example42/network
 - name: thias/sysctl
 - name: puppet/prometheus
-- name: camptocamp/systemd
+- name: puppet/systemd
 - name: puppet/archive
 - git: https://github.com/aequitas/eyp-systemd
   ref: master

@@ -44,14 +44,6 @@ class base (
     multiple => false,
   }
 
-  # enable ntp
-  class { '::ntp':
-      servers => [
-          '0.pool.ntp.org', '1.pool.ntp.org',
-          '2.pool.ntp.org', '3.pool.ntp.org'
-      ],
-  }
-
   # enable ssh server
   class { '::ssh':
     storeconfigs_enabled => false,
@@ -71,10 +63,6 @@ class base (
   -> sudo::conf { 'lecture':
     priority => 10,
     content  => "Defaults\tlecture=\"always\"\nDefaults\tlecture_file=\"/etc/sudoers.lecture\"\n",
-  }
-
-  swap_file::files { 'default':
-      ensure   => present,
   }
 
   # IPv6
