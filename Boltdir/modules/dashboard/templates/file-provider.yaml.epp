@@ -25,8 +25,6 @@ http:
           X-Content-Type-Options: nosniff
           # prevent browser from rendering page if it detects XSS attack
           X-XSS-Protection: "1;mode=block"
-          # tell browser to deny any form of framing
-          X-Frame-Options: SAMEORIGIN
           # don't send any referrer info to third parties
           Referrer-Policy: same-origin
           # CSP generated with Mozilla Laboratory after clicking through the site: https://addons.mozilla.org/en-US/firefox/addon/laboratory-by-mozilla/
