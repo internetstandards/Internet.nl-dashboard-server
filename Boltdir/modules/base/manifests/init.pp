@@ -44,14 +44,6 @@ class base (
     multiple => false,
   }
 
-  # enable ntp
-  class { '::ntp':
-      servers => [
-          '0.pool.ntp.org', '1.pool.ntp.org',
-          '2.pool.ntp.org', '3.pool.ntp.org'
-      ],
-  }
-
   # enable ssh server
   class { '::ssh':
     storeconfigs_enabled => false,
@@ -73,24 +65,19 @@ class base (
     content  => "Defaults\tlecture=\"always\"\nDefaults\tlecture_file=\"/etc/sudoers.lecture\"\n",
   }
 
-  swap_file::files { 'default':
-      ensure   => present,
-  }
-
   # IPv6
   class {'network': }
 
-  network::interface { $::networking['primary']:
-    auto => false,
-    allow_hotplug => true,
-    enable_dhcp => true,
+  network_config { $::networking['primary']:
+    onboot  => true,
+    hotplug => false,
+    method  => 'dhcp',
   }
 
   if $ipv6_address {
     # configure static ipv6 address
-    network::interface { "${::networking['primary']}_v6":
-      auto      => false,
-      interface => $::networking['primary'],
+    network_config { "${::networking['primary']}:0":
+      onboot    => true,
       family    => inet6,
       ipaddress => $ipv6_address,
     }
@@ -98,7 +85,7 @@ class base (
     # workaround issue with IPv4 address being dropped because dhclient
     # not being started due to failing dad on IPv6 when interface is brought up
     # https://forums.debian.net/viewtopic.php?t=135218&start=15
-    concat::fragment { "interface-dad-fix":
+    concat::fragment { 'interface-dad-fix':
       target  => '/etc/network/interfaces',
       content => 'dad-attempts 0',
       order   => 99,
@@ -129,8 +116,8 @@ class base (
 
     # hack to make sure above accept_ra are reapplied after docker is started
     # and has messed up everything IPv6
-    File['/etc/systemd/system/docker.service.d'] ->
-    file { '/etc/systemd/system/docker.service.d/ipv6-hack-fix.conf':
+    File['/etc/systemd/system/docker.service.d']
+    -> file { '/etc/systemd/system/docker.service.d/ipv6-hack-fix.conf':
       ensure  => present,
       content => "[Service]\nExecStartPost=/sbin/sysctl --system\n",
     }

@@ -10,9 +10,10 @@ bin = /usr/bin
 endif
 
 puppet-lint = ${bin}/puppet-lint
-vagrant = ${bin}/vagrant
-virtualbox = ${bin}/virtualbox
 inspec = ${bin}/inspec
+
+hetzner_ssh_key_name = default
+ssh_user = root
 
 # Default action is to install dependencies
 all: | ${bolt}
@@ -33,22 +34,32 @@ update_staging update_live: update_%:
 
 # Spin up and provision local VM for testing
 lab: labhost apply_lab
-labhost: | ${vagrant} ${virtualbox}
-	# check if testhost is up or start it
-	nc 172.30.1.5 -z 22 -w 3 -n || ${vagrant} up
+labhost:
+	hcloud server describe internetnl-dashboard-lab --output json 2>/dev/null | jq -e '.status == "running"' >/dev/null || \
+	hcloud server create --name=internetnl-dashboard-lab --image=debian-12 --type cpx31 --ssh-key ${hetzner_ssh_key_name}
+	timeout --foreground 30 sh -c 'while ! ssh -oStrictHostKeyChecking=no ${ssh_user}@$$(hcloud server ip internetnl-dashboard-lab) exit 0;do sleep 1; done'
 
 # Local integrationtesting
 test: lab test_inspec
 test_inspec: | ${inspec}
 	${inspec} exec spec/ \
-		-t ssh://vagrant@172.30.1.5 \
-		-i .vagrant/machines/default/virtualbox/private_key
+		-t ssh://${ssh_user}@$$(hcloud server ip internetnl-dashboard-lab)
 
 # Apply server configuration to nodes
-apply_lab apply_staging apply_live apply_all: apply_%: Boltdir/.modules/ | ${bolt}
+apply_staging apply_live apply_all: apply_%: Boltdir/.modules/ | ${bolt}
 	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
 
-plan_lab plan_staging plan_live plan_all: plan_%: Boltdir/.modules/ | ${bolt}
+apply_lab: apply_%: Boltdir/.modules/ | ${bolt}
+	LAB_URI=$$(hcloud server ip internetnl-dashboard-lab) \
+	SSH_USER=${ssh_user} \
+	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
+
+plan_staging plan_live plan_all: plan_%: Boltdir/.modules/ | ${bolt}
+	${bolt} apply --noop --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
+
+plan_lab: plan_%: Boltdir/.modules/ | ${bolt}
+	LAB_URI=$$(hcloud server ip internetnl-dashboard-lab) \
+	SSH_USER=${ssh_user} \
 	${bolt} apply --noop --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
 
 # Development workflow
@@ -67,8 +78,6 @@ Boltdir/.modules/: Boltdir/Puppetfile Boltdir/bolt-project.yaml| ${bolt}
 
 # Install dependencies
 ifeq ($(shell uname -s),Darwin)
-${vagrant} ${virtualbox}:
-	brew cask install ${@F}
 ${bolt}:
 	brew tap puppetlabs/puppet
 	brew install --cask puppet-bolt
@@ -76,9 +85,9 @@ ${puppet-lint}:
 	brew tap rockyluke/devops
 	brew install puppet-lint
 ${inspec}:
-	brew cask install chef/chef/inspec
+	brew install --cask chef/chef/inspec
 else ifneq (,$(shell grep ubuntu /etc/os-release))
-${puppet-lint} ${vagrant} ${virtualbox}:
+${puppet-lint}
 	sudo apt-get install -yqq ${@F}
 ${bolt}:
 	wget https://apt.puppet.com/puppet6-release-$(shell lsb_release -c -s).deb
@@ -102,4 +111,4 @@ mrproper: destroy_vm clean
 	rm -rf Boltdir/.modules/
 
 destroy_lab:
-	-vagrant destroy -f
+	hcloud server delete internetnl-dashboard-lab

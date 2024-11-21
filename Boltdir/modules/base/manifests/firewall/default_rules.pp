@@ -15,39 +15,39 @@ define base::firewall::default_rules (
   # Default firewall rules
   firewall { "000 accept all icmp (${provider})":
     proto    => $icmp,
-    action   => 'accept',
-    provider => $provider,
+    jump     => 'accept',
+    protocol => $provider,
   }
   -> firewall { "001 accept all to lo interface (${provider})":
     proto    => 'all',
     iniface  => 'lo',
-    action   => 'accept',
-    provider => $provider,
+    jump     => 'accept',
+    protocol => $provider,
   }
   -> firewall { "002 reject local traffic not on loopback interface (${provider})":
     iniface     => '! lo',
     proto       => 'all',
     destination => $local,
-    action      => 'reject',
-    provider    => $provider,
+    jump        => 'reject',
+    protocol    => $provider,
   }
   -> firewall { "003 accept related established rules (${provider})":
     proto    => 'all',
     state    => ['RELATED', 'ESTABLISHED'],
-    action   => 'accept',
-    provider => $provider,
+    jump     => 'accept',
+    protocol => $provider,
   }
   -> firewall_multi { "010 SSH admin whitelist (${provider})":
     source   => $admin_ip_whitelist[$provider],
     dport    => 22,
     proto    => tcp,
-    action   => accept,
-    provider => $provider,
+    jump     => accept,
+    protocol => $provider,
   }
   -> firewall { "999 drop all (${provider})":
     proto    => 'all',
-    action   => 'drop',
+    jump     => 'drop',
     before   => undef,
-    provider => $provider,
+    protocol => $provider,
   }
 }

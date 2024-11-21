@@ -5,24 +5,23 @@ modules:
 - name: puppet/unattended_upgrades
 - name: puppetlabs/ntp
 - name: saz/ssh
-- name: puppetlabs/concat
 - name: saz/sudo
 - name: puppetlabs/firewall
 - name: puppetlabs/accounts
+  version_requirement: ">=7.0.0"
 - name: puppetlabs/translate
 - name: puppetlabs/docker
-  # pinned for convenience, to not deal with updating to new start/stop scripts for now
-  version_requirement: 3.1.0
-- name: example42/network
 - name: thias/sysctl
 - name: puppet/prometheus
-- name: camptocamp/systemd
+- name: puppet/systemd
 - name: puppet/archive
 - git: https://github.com/aequitas/eyp-systemd
   ref: master
 - name: eyp/eyplib
 - git: https://github.com/petems/petems-swap_file.git
   ref: v4.0.3
-
+- puppet/network
+- puppetlabs/vcsrepo
+- alexharvey/firewall_multi
 apply-settings:
   show_diff: true
