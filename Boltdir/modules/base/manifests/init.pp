@@ -68,17 +68,16 @@ class base (
   # IPv6
   class {'network': }
 
-  network::interface { $::networking['primary']:
-    auto => true,
-    allow_hotplug => false,
-    enable_dhcp => true,
+  network_config { $::networking['primary']:
+    onboot => true,
+    hotplug => false,
+    method => 'dhcp',
   }
 
   if $ipv6_address {
     # configure static ipv6 address
-    network::interface { "${::networking['primary']}_v6":
-      auto      => false,
-      interface => $::networking['primary'],
+    network_config { "${::networking['primary']}:0":
+      onboot      => true,
       family    => inet6,
       ipaddress => $ipv6_address,
     }
