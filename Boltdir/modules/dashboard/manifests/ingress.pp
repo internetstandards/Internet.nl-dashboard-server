@@ -70,7 +70,7 @@ class dashboard::ingress {
     ],
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.maintenance.rule='PathPrefix(\"/\")'",
+      "traefik.http.routers.maintenance.rule=PathPrefix(\"/\")",
       'traefik.http.routers.maintenance.priority=1',
       'traefik.http.routers.maintenance.entrypoints=websecure',
     ],

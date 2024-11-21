@@ -41,23 +41,23 @@ class dashboard (
     chain       => 'FORWARD',
     source      => '172.17.0.0/14',
     destination => '172.17.0.0/14',
-    jump      => accept,
+    jump        => accept,
   }
 
   firewall { '100 forwarding containers to internet':
     chain    => 'FORWARD',
     proto    => all,
-    source =>  '172.17.0.0/14',
+    source   =>  '172.17.0.0/14',
     outiface => $::networking['primary'],
-    jump   => accept,
+    jump     => accept,
   }
 
   firewall { '100 forwarding internet to containers':
-    chain    => 'FORWARD',
-    proto  => 'all',
+    chain       => 'FORWARD',
+    proto       => 'all',
     destination =>  '172.17.0.0/14',
-    state  => ['RELATED', 'ESTABLISHED'],
-    jump   => accept,
+    state       => ['RELATED', 'ESTABLISHED'],
+    jump        => accept,
   }
 
   # external facing webserver

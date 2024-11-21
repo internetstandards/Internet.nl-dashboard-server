@@ -5,16 +5,16 @@ class dashboard::app (
   $image_tag = latest,
   $sentry_dsn = undef,
   $auto_update_interval = undef,
+  $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}",
+  $hosts = join(suffix(prefix($_hosts, '"'), '"'),', '),
 ) {
+  include ::dashboard::ctlssa
+
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',
     mode   => '0755',
   }
   -> ::Docker::Run['dashboard']
-
-  $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}"
-
-  $hosts = join(suffix(prefix($_hosts, '"'), '"'),", ")
 
   ::docker::run { 'dashboard-static':
     image                 => "internetstandards/dashboard-static:${image_tag}",
@@ -26,8 +26,7 @@ class dashboard::app (
     ],
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.dashboard-static.rule='Host(${hosts})'",
-      'traefik.http.routers.dashboard-static.priority=10',
+      "traefik.http.routers.dashboard-static.rule=Host(${hosts})",
       'traefik.http.routers.dashboard-static.entrypoints=websecure',
     ],
   }
@@ -50,7 +49,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
-    extra_parameters => ['--security-opt seccomp=unconfined'],
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -60,8 +59,7 @@ class dashboard::app (
     labels                => [
       'traefik.enable=true',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.http.routers.dashboard.rule='Host(${hosts}) && PathPrefix(${dynamic_content_paths})'",
-      'traefik.http.routers.dashboard.priority=20',
+      "traefik.http.routers.dashboard.rule=Host(${hosts}) && PathPrefix(${dynamic_content_paths})",
       'traefik.http.routers.dashboard.entrypoints=websecure',
     ],
     env                   => [
@@ -75,6 +73,7 @@ class dashboard::app (
       'WORKER_ROLE=default',
       'BROKER=redis://broker:6379/0',
       "SENTRY_DSN=${sentry_dsn}",
+      "DASHBOARD_SUBDOMAIN_SUGGESTION_SERVER_ADDRESS=https://${dashboard::subdomain}.${dashboard::domain}/ctlssa",
     ],
   }
   ~> exec { 'migrate-db':
@@ -93,7 +92,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker':
     image                 => "internetstandards/dashboard:${image_tag}",
-    extra_parameters => ['--security-opt seccomp=unconfined'],
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -118,7 +117,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker-reporting':
     image                 => "internetstandards/dashboard:${image_tag}",
-    extra_parameters => ['--security-opt seccomp=unconfined'],
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -142,7 +141,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-worker-scanning':
     image                 => "internetstandards/dashboard:${image_tag}",
-    extra_parameters => ['--security-opt seccomp=unconfined'],
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -166,7 +165,7 @@ class dashboard::app (
 
   ::docker::run { 'dashboard-scheduler':
     image                 => "internetstandards/dashboard:${image_tag}",
-    extra_parameters => ['--security-opt seccomp=unconfined'],
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
@@ -205,7 +204,7 @@ class dashboard::app (
       'broker:broker',
     ],
     # allow graceful shutdown of database
-    stop_wait_time => 60,
+    stop_wait_time        => 60,
   }
 
   ::docker::run { 'broker':
@@ -217,8 +216,8 @@ class dashboard::app (
 
   # cleanup
   ::docker::run { ['worker', 'scheduler']:
-    ensure => absent,
-    image  => "internetstandards/dashboard:${image_tag}",
+    ensure           => absent,
+    image            => "internetstandards/dashboard:${image_tag}",
     extra_parameters => ['--security-opt seccomp=unconfined'],
   }
 

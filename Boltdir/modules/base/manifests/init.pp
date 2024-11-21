@@ -69,15 +69,15 @@ class base (
   class {'network': }
 
   network_config { $::networking['primary']:
-    onboot => true,
+    onboot  => true,
     hotplug => false,
-    method => 'dhcp',
+    method  => 'dhcp',
   }
 
   if $ipv6_address {
     # configure static ipv6 address
     network_config { "${::networking['primary']}:0":
-      onboot      => true,
+      onboot    => true,
       family    => inet6,
       ipaddress => $ipv6_address,
     }
@@ -85,7 +85,7 @@ class base (
     # workaround issue with IPv4 address being dropped because dhclient
     # not being started due to failing dad on IPv6 when interface is brought up
     # https://forums.debian.net/viewtopic.php?t=135218&start=15
-    concat::fragment { "interface-dad-fix":
+    concat::fragment { 'interface-dad-fix':
       target  => '/etc/network/interfaces',
       content => 'dad-attempts 0',
       order   => 99,
@@ -116,8 +116,8 @@ class base (
 
     # hack to make sure above accept_ra are reapplied after docker is started
     # and has messed up everything IPv6
-    File['/etc/systemd/system/docker.service.d'] ->
-    file { '/etc/systemd/system/docker.service.d/ipv6-hack-fix.conf':
+    File['/etc/systemd/system/docker.service.d']
+    -> file { '/etc/systemd/system/docker.service.d/ipv6-hack-fix.conf':
       ensure  => present,
       content => "[Service]\nExecStartPost=/sbin/sysctl --system\n",
     }

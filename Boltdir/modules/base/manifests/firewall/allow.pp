@@ -6,13 +6,13 @@ define base::firewall::allow (
   firewall { "100 allow port ${port}/${proto}":
     dport    => $port,
     proto    => $proto,
-    jump   => accept,
+    jump     => accept,
     protocol => iptables,
   }
   firewall { "100 allow port ${port}/${proto} (ip6tables)":
     dport    => $port,
     proto    => $proto,
-    jump   => accept,
+    jump     => accept,
     protocol => ip6tables,
   }
 }

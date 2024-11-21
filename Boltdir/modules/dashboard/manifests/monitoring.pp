@@ -5,9 +5,9 @@ class dashboard::monitoring (
 ) {
   $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}"
 
-  $hosts = join(suffix(prefix($_hosts, '"'), '"'),", ")
+  $hosts = join(suffix(prefix($_hosts, '"'), '"'),', ')
 
-  $sourcerange = join($whitelist['iptables'] + $whitelist['ip6tables'], ",")
+  $sourcerange = join($whitelist['iptables'] + $whitelist['ip6tables'], ',')
 
   ::docker::run { 'monitoring':
     image                 => 'quay.io/prometheus/node-exporter',
@@ -17,7 +17,7 @@ class dashboard::monitoring (
     health_check_interval => 60,
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.monitoring.rule='Host(${hosts}) && PathPrefix(\"/metrics\")'",
+      "traefik.http.routers.monitoring.rule=Host(${hosts}) && PathPrefix(\"/metrics\")",
       'traefik.http.routers.monitoring.priority=30',
       'traefik.http.routers.monitoring.entrypoints=websecure',
       "traefik.http.middlewares.admin-whitelist-monitoring.ipwhitelist.sourcerange=${sourcerange}",
