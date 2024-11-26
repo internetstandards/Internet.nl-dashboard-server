@@ -18,7 +18,6 @@ class dashboard::monitoring (
     labels                => [
       'traefik.enable=true',
       "traefik.http.routers.monitoring.rule=Host(${hosts}) && PathPrefix(\"/metrics\")",
-      'traefik.http.routers.monitoring.priority=30',
       'traefik.http.routers.monitoring.entrypoints=websecure',
       "traefik.http.middlewares.admin-whitelist-monitoring.ipwhitelist.sourcerange=${sourcerange}",
       'traefik.http.routers.monitoring.middlewares=admin-whitelist-monitoring',
