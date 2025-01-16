@@ -12,7 +12,6 @@ endif
 puppet-lint = ${bin}/puppet-lint
 inspec = ${bin}/inspec
 
-hetzner_ssh_key_name = default
 ssh_user = root
 
 # Default action is to install dependencies
@@ -35,9 +34,12 @@ update_staging update_live: update_%:
 # Spin up and provision local VM for testing
 lab: labhost apply_lab
 labhost:
+	if [ -z "${hetzner_ssh_key_name}" ]; then echo "Must provide 'hetzner_ssh_key_name' argument"; exit 1; fi
 	hcloud server describe internetnl-dashboard-lab --output json 2>/dev/null | jq -e '.status == "running"' >/dev/null || \
 	hcloud server create --name=internetnl-dashboard-lab --image=debian-12 --type cpx31 --ssh-key ${hetzner_ssh_key_name}
-	timeout --foreground 30 sh -c 'while ! ssh -oStrictHostKeyChecking=no ${ssh_user}@$$(hcloud server ip internetnl-dashboard-lab) exit 0;do sleep 1; done'
+	# will until the SSH server is up, then store the server host key
+	while ! ssh-keyscan  $$(hcloud server ip internetnl-dashboard-lab) >> ~/.ssh/known_hosts ;do sleep 1;done
+
 
 # Local integrationtesting
 test: lab test_inspec

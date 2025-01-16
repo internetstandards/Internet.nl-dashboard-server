@@ -1,7 +1,6 @@
 # dashboard app, queue and database
 class dashboard::monitoring (
   $whitelist = $base::firewall::admin_ip_whitelist,
-  $headers = $dashboard::app::headers,
 ) {
   $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}"
 
