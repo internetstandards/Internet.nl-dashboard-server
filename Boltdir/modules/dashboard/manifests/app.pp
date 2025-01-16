@@ -75,6 +75,10 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
       "DASHBOARD_SUBDOMAIN_SUGGESTION_SERVER_ADDRESS=https://${dashboard::subdomain}.${dashboard::domain}/ctlssa",
     ],
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        "127.0.0.1"
+    ],
   }
   ~> exec { 'migrate-db':
     command     => '/bin/systemctl start dashboard-migrate',
@@ -113,7 +117,11 @@ class dashboard::app (
     ],
     # for some reason redis tells us that kickoff3 exists, might be a glitch and that it's just kickoff...
     command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4,database_deprecate,database_deprecate3,database,database3',
-  }
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        "127.0.0.1"
+    ],
+}
 
   ::docker::run { 'dashboard-worker-reporting':
     image                 => "internetstandards/dashboard:${image_tag}",
@@ -137,7 +145,11 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard worker -Q reporting',
-  }
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        "127.0.0.1"
+    ],
+}
 
   ::docker::run { 'dashboard-worker-scanning':
     image                 => "internetstandards/dashboard:${image_tag}",
@@ -161,6 +173,10 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard worker -Q ipv4,internet',
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        "127.0.0.1"
+    ],
   }
 
   ::docker::run { 'dashboard-scheduler':
@@ -182,6 +198,10 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     command               => 'celery_dashboard beat -l info --pidfile=/var/tmp/celerybeat.pid',
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        "127.0.0.1"
+    ],
   }
 
   ::docker::run { 'db':
@@ -278,5 +298,30 @@ class dashboard::app (
       command     => '/bin/systemctl start dashboard-update.timer',
       refreshonly => true,
     }
+  }
+
+
+  file {
+  '/etc/unbound':
+    ensure => directory;
+
+  '/etc/unbound/unbound.conf':
+    content => epp('dashboard/unbound-permissive.conf', {});
+  } ~>
+  ::docker::run { 'resolver':
+    image                 => "alpinelinux/unbound",
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    env                   => [
+    ],
+    volumes => [
+        "/etc/unbound/unbound.conf:/etc/unbound/unbound.conf",
+    ],
+    ports => [
+        "127.0.0.1:53:53/tcp",
+        "127.0.0.1:53:53/udp",
+    ],
+    health_check_cmd => "/usr/sbin/unbound-control -c /etc/unbound/unbound.conf status",
   }
 }
