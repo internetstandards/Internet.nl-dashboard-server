@@ -30,7 +30,7 @@ class dashboard::ctlssa (
                 environment:
                     - CTLSSA_HOSTNAMES=${ctlssa_hostnames}
                     - SECRET_KEY=${secret_key}
-            app-ingest
+            app-ingest:
                 environment:
                     - SECRET_KEY=${secret_key}
 
