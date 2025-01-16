@@ -1,0 +1,23 @@
+server:
+  num-threads: 2
+  username: "unbound"
+
+  interface: 0.0.0.0
+  interface: ::
+
+  access-control: 0.0.0.0/0 allow_setrd
+  access-control: ::/0 allow_setrd
+
+  # configure as permissive resolver
+  module-config: "iterator"
+  chroot: ""
+
+  logfile: ""
+  log-queries: yes
+
+# required for status checks
+remote-control:
+  control-enable: yes
+  control-interface: 127.0.0.1
+
+  control-use-cert: no
