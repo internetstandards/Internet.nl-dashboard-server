@@ -68,27 +68,24 @@ class base (
   # IPv6
   class {'network': }
 
-  network_config { $::networking['primary']:
-    onboot  => true,
-    hotplug => false,
-    method  => 'dhcp',
+  # puppet-networking module does not handle ipv6 properly, managing /etc/network/interfaces files manually
+  # because else we need to switch to systemd-networkd or something
+  file { "/etc/network/interfaces":
+      content => @("END")
+      source /etc/network/interfaces.d/*
+      auto ${::networking['primary']} lo
+      allow-hotplug ${::networking['primary']}
+      iface ${::networking['primary']} inet dhcp
+      iface lo inet loopback
+      |END
   }
 
   if $ipv6_address {
-    # configure static ipv6 address
-    network_config { "${::networking['primary']}:0":
-      onboot    => true,
-      family    => inet6,
-      ipaddress => $ipv6_address,
-    }
-
-    # workaround issue with IPv4 address being dropped because dhclient
-    # not being started due to failing dad on IPv6 when interface is brought up
-    # https://forums.debian.net/viewtopic.php?t=135218&start=15
-    concat::fragment { 'interface-dad-fix':
-      target  => '/etc/network/interfaces',
-      content => 'dad-attempts 0',
-      order   => 99,
+    file { "/etc/network/interfaces.d/${::networking['primary']}_ipv6.conf":
+        content => @("END")
+        iface ens3 inet6 static
+          address ${ipv6_address}
+        |END
     }
 
     # fix ipv6 autoconf for because Docker enables forwarding, but this system
