@@ -7,6 +7,7 @@ class dashboard (
   $le_staging = true,
   $ipv6_subnet = '2001:db8:1::/64',
   $admin_ip_whitelist = [],
+  $dns_ip = '172.18.0.53'
 ){
   $docker_subnet = '172.17.0.0/16'
   $dashboard_subnet = '172.18.0.0/16'
