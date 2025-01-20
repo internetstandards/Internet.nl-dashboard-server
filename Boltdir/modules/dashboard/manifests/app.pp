@@ -77,7 +77,7 @@ class dashboard::app (
     ],
     dns => [
         # use permissive resolver container (see `resolver` below)
-        "127.0.0.1"
+        $dashboard::dns_ip
     ],
   }
   ~> exec { 'migrate-db':
@@ -119,7 +119,7 @@ class dashboard::app (
     command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4,database_deprecate,database_deprecate3,database,database3',
     dns => [
         # use permissive resolver container (see `resolver` below)
-        "127.0.0.1"
+        $dashboard::dns_ip
     ],
 }
 
@@ -147,7 +147,7 @@ class dashboard::app (
     command               => 'celery_dashboard worker -Q reporting',
     dns => [
         # use permissive resolver container (see `resolver` below)
-        "127.0.0.1"
+        $dashboard::dns_ip
     ],
 }
 
@@ -175,7 +175,7 @@ class dashboard::app (
     command               => 'celery_dashboard worker -Q ipv4,internet',
     dns => [
         # use permissive resolver container (see `resolver` below)
-        "127.0.0.1"
+        $dashboard::dns_ip
     ],
   }
 
@@ -200,7 +200,7 @@ class dashboard::app (
     command               => 'celery_dashboard beat -l info --pidfile=/var/tmp/celerybeat.pid',
     dns => [
         # use permissive resolver container (see `resolver` below)
-        "127.0.0.1"
+        $dashboard::dns_ip
     ],
   }
 
@@ -315,12 +315,9 @@ class dashboard::app (
     health_check_interval => 60,
     env                   => [
     ],
+    extra_parameters => ["--ip=${dashboard::dns_ip}"],
     volumes => [
         "/etc/unbound/unbound.conf:/etc/unbound/unbound.conf",
-    ],
-    ports => [
-        "127.0.0.1:53:53/tcp",
-        "127.0.0.1:53:53/udp",
     ],
     health_check_cmd => "/usr/sbin/unbound-control -c /etc/unbound/unbound.conf status",
   }
