@@ -205,10 +205,10 @@ class dashboard::app (
   }
 
   ::docker::run { 'db':
-    image                 => 'postgres:12',
+    image                 => 'postgres:18-alpine',
     systemd_restart       => always,
     volumes               => [
-      '/srv/dashboard/db/:/var/lib/postgresql/data',
+      '/srv/dashboard/db/:/var/lib/postgresql/',
     ],
     ports                 => [],
     net                   => dashboard,
