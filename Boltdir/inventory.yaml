@@ -27,3 +27,7 @@ config:
     ssh-command: /usr/bin/ssh
     host-key-check: false
     run-as: root
+    native-ssh: true
+    ssh-command:
+      - 'ssh'
+      - '-o Ciphers=chacha20-poly1305@openssh.com'
