@@ -12,6 +12,11 @@ accounts::user_list:
     sshkeys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDSD/TFYNq8V/RofrxLZWiPpdM/bj3b6vto+oRhfAb+4gsfsyxbrpETvHKdahCiJTZA+jheJQdaS2IWkrpZw1sCV0pSMcD6aZJWaDomfY2wNkrNs69mDzIL3HCsqUOVft5Md46Uh21+2vLIFgPLLrn58wOBszCK5DFTTQ9VrAirpwsaZ/rJj1iFwd+35MJVDe6K5LDF1tVEJl4MdqOs2Yhi25Zuz/ynP7zeF6420arqbbXjlSIDHbTjHJ54rBvDHqhg1cuYN4CGc3Fx7NTHfSYX4tlUvVS0EDLcNXWN+QlU4EI7qXHLjGastc7UqnLc4oFivQUOjlVFizF+hghb14MFYrAegTbzdS4kAROXLv/SVr360SVXfHdL2I3AE5oC9/IEsDXiWHEPZv/OX2t/reuCkt3hIZ4MQRZyXsO5TaDrJb8mnVIpbXOGrzlQ0Eec5IvEVotz0wLxK3zOk/Hs0oTOxpbryg9j5iMBQ2CyXBR3Er0YkPeuWjj3YMNbO33yaaER+EZXdg/cfYnuowM0wGXjYwmASTzNX4CDT1VjxS3H3V6+wMxM9aNmk+kFumGtW8b9VQNC55hokK4QeCteBv2bS99+Vnki0MfGI+1H1ljviJrXJ8EeYmY15CgPRtjYPiHRZdCuLTRR//4ZaZMbCussvOlGAxZ05LcIC5fiPmiHvQ== stitch
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIISyxxCczyKhGjhuV4ew68okxMNOO8+osSIvESBHEcg9 elger.jonker@gmail.com
+  benjamin.broersma:
+    groups: [users, sudo]
+    sshkeys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN+KwAQ8gjf2/Q99DbPpYzAmDZknYkKZmIxF7vuxunzuwEe4dQOJTkugzcxGOVqCz/LdusKwemrltRlYd9PmcY95wJHFVwU+Dw7omg/Mv8H8u/6+ARzuZwqrMrNvkyBvi0wITg+YV02U+w7akSOsUj1WlOpiUkUKjdvkxTTdxDZ2P/AIniWGWzj/YkiHPDUGWCUpnGadW2yUdcf2wsqk/1x1al4EDUDCu4zJZoBLu+Abkfblihd6EWhmN7y4G+Dv9JlDQP3IVpYcP7XrBhnWv2zxKCMuWmt5gkYD0tK+oDU5XpMOiMmB0mCtLaTbcwvxrW2J+s/JgoE7GTNmS/IB2Sl5+KQHJhNmbgqkGgUbugtet/3j+vvmzbPkyJBkbdLEQ8x8/o9SHDNrmL677izUDqMkSnD1CtU7ZrUybj5FABF3PP+CKyAheb0DrpYtK07znTX6KF5So5SZdmsELSo+ipQwA/YAfIBE41Mca0wmDg+DjJ7nw4SN9MEjFiVY2tW82We7JZGBpWePOQ/kH97ruY0KULL06f6lH6f82UY3Ol6ekZ7xbRAy2FNTCk/jKgvpW1uhb5Wqw0tSNRW4xey7bj7qh9mkH6Z1TM8x5sfAkFoEyvp6KP6Yjq/FSIpc0zHvHIYODX7SIS9QBS6/MsKOYoMW3BdyqJY1d4s8CUgA8YTQ== bwb
+
 
 base::firewall::admin_ip_whitelist:
   iptables:
@@ -23,6 +28,11 @@ base::firewall::admin_ip_whitelist:
     - "77.172.254.93/32"
     # monitoring
     - "162.55.63.10/32"
+    # benjamin
+    - 144.43.250.21
+    - 144.43.250.23
+    - 81.206.187.161/32
+
   ip6tables:
     # johan
     - "2a02:a445:c805::/48"
@@ -31,6 +41,8 @@ base::firewall::admin_ip_whitelist:
     - "2a02:a45a:bf26:1::/64"
     # monitoring
     - "2a01:4f8:1c1c:800d::/64"
+    # benjamin
+    - "2a02:a463:46f::/48"
 
 systemd::journald_settings:
   Storage: persistent
