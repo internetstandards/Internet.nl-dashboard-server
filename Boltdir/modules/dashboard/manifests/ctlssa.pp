@@ -31,8 +31,13 @@ class dashboard::ctlssa (
                     - CTLSSA_HOSTNAMES=${ctlssa_hostnames}
                     - SECRET_KEY=${secret_key}
             app-ingest:
+                # limit nr of cpus this application can use to prevent OS resource starvation
+                cpu_count: 1
                 environment:
                     - SECRET_KEY=${secret_key}
+            certstream:
+              # limit nr of cpus this application can use to prevent OS resource starvation
+              cpu_count: 1
 
         |END
     } ~> Docker_compose['internetnl-ctlssa']
