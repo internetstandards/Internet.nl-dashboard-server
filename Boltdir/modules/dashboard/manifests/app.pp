@@ -74,11 +74,16 @@ class dashboard::app (
       'BROKER=redis://broker:6379/0',
       "SENTRY_DSN=${sentry_dsn}",
       "DASHBOARD_SUBDOMAIN_SUGGESTION_SERVER_ADDRESS=https://${dashboard::subdomain}.${dashboard::domain}/ctlssa",
+      # reduce amount of concurrent worker processes
+      'UWSGI_CHEAPER=1',
+      'UWSGI_WORKERS=4',
     ],
     dns => [
         # use permissive resolver container (see `resolver` below)
         $dashboard::dns_ip
     ],
+    # set memory limit to prevent container starving the OS of memory
+    memory_limit => '4g',
   }
   ~> exec { 'migrate-db':
     command     => '/bin/systemctl start dashboard-migrate',
