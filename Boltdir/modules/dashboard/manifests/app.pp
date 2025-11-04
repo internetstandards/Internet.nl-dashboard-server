@@ -172,7 +172,7 @@ class dashboard::app (
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
-    command               => 'celery_dashboard worker -Q ipv4,internet',
+    command               => 'celery_dashboard worker -Q ipv4,internet,internetnl',
     dns => [
         # use permissive resolver container (see `resolver` below)
         $dashboard::dns_ip
