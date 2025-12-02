@@ -36,6 +36,7 @@ class dashboard::app (
     '/accounts/',
     '/account/',
     '/admin/',
+    '/api/',
     '/data/',
     '/jet/',
     '/logout',
