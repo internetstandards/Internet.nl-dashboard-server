@@ -32,7 +32,7 @@ class dashboard::app (
   }
 
   # all paths that should be routed to Django dynamic backend
-  $dynamic_content_paths = join(suffix(prefix([
+  $dynamic_content_paths = join([
     '/accounts/',
     '/account/',
     '/admin/',
@@ -46,7 +46,7 @@ class dashboard::app (
     '/upload/',
     '/security.txt',
     '/.well-known/security.txt'
-  ], '"'), '"'), ', ')
+  ], '|')
 
   ::docker::run { 'dashboard':
     image                 => "internetstandards/dashboard:${image_tag}",
@@ -60,7 +60,7 @@ class dashboard::app (
     labels                => [
       'traefik.enable=true',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.http.routers.dashboard.rule=HostRegexp(\"${hosts}\") && PathPrefix(${dynamic_content_paths})",
+      "traefik.http.routers.dashboard.rule=HostRegexp(\"${hosts}\") && PathRegexp(\"${dynamic_content_paths}\")",
       'traefik.http.routers.dashboard.entrypoints=websecure',
     ],
     env                   => [
