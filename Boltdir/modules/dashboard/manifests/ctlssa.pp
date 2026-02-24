@@ -23,7 +23,7 @@ class dashboard::ctlssa (
             app:
                 labels:
                     - "traefik.enable=true"
-                    - 'traefik.http.routers.ctlssa.rule=Host(${dashboard::app::hosts}) && PathPrefix(`/ctlssa`)'
+                    - 'traefik.http.routers.ctlssa.rule=HostRegexp("${dashboard::app::hosts}") && PathPrefix(`/ctlssa`)'
                     - "traefik.http.routers.ctlssa.entrypoints=websecure"
                     - "traefik.http.middlewares.local-only-whitelist.ipwhitelist.sourcerange=172.16.0.0/12"
                     - "traefik.http.routers.ctlssa.middlewares=local-only-whitelist"
