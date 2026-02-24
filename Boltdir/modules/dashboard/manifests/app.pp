@@ -6,7 +6,7 @@ class dashboard::app (
   $sentry_dsn = undef,
   $auto_update_interval = undef,
   $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}",
-  $hosts = join(suffix(prefix($_hosts, '"'), '"'),', '),
+  $hosts = join($_hosts,'|'),
 ) {
   include ::dashboard::ctlssa
 
@@ -26,7 +26,7 @@ class dashboard::app (
     ],
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.dashboard-static.rule=Host(${hosts})",
+      "traefik.http.routers.dashboard-static.rule=HostRegexp(\"${hosts}\")",
       'traefik.http.routers.dashboard-static.entrypoints=websecure',
     ],
   }
@@ -60,7 +60,7 @@ class dashboard::app (
     labels                => [
       'traefik.enable=true',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.http.routers.dashboard.rule=Host(${hosts}) && PathPrefix(${dynamic_content_paths})",
+      "traefik.http.routers.dashboard.rule=HostRegexp(\"${hosts}\") && PathPrefix(${dynamic_content_paths})",
       'traefik.http.routers.dashboard.entrypoints=websecure',
     ],
     env                   => [
