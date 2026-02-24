@@ -1,6 +1,7 @@
 # manage ingress webserver, caching, general maintenance
 class dashboard::ingress {
-  file { '/etc/traefik/':
+
+file { '/etc/traefik/':
     ensure => directory,
   }
   file { '/etc/traefik/traefik.yaml':
@@ -70,7 +71,7 @@ class dashboard::ingress {
     ],
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.maintenance.rule=PathPrefix(\"/\")",
+      "traefik.http.routers.maintenance.rule=${dashboard::app::hostrules} && PathPrefix(\"/\")",
       'traefik.http.routers.maintenance.priority=1',
       'traefik.http.routers.maintenance.entrypoints=websecure',
     ],

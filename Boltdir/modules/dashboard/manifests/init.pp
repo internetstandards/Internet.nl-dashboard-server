@@ -61,11 +61,11 @@ class dashboard (
     jump        => accept,
   }
 
-  # external facing webserver
-  class { '::dashboard::ingress': }
-
   # application, queue, database
   class { '::dashboard::app': }
+
+  # external facing webserver
+  class { '::dashboard::ingress': }
 
   class { '::dashboard::monitoring': }
 }

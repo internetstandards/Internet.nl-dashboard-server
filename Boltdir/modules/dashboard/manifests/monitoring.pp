@@ -14,10 +14,10 @@ class dashboard::monitoring (
     health_check_interval => 60,
     labels                => [
       'traefik.enable=true',
-      "traefik.http.routers.monitoring.rule=HostRegexp(\"${dashboard::app::hosts}\") && PathPrefix(\"/metrics\")",
+      "traefik.http.routers.monitoring.rule=${dashboard::app::hostrules} && PathPrefix(\"/metrics\")",
       'traefik.http.routers.monitoring.entrypoints=websecure',
-      "traefik.http.middlewares.admin-whitelist-monitoring.ipwhitelist.sourcerange=${sourcerange}",
-      'traefik.http.routers.monitoring.middlewares=admin-whitelist-monitoring',
+      "traefik.http.middlewares.admin-allowlist-monitoring.ipallowlist.sourcerange=${sourcerange}",
+      'traefik.http.routers.monitoring.middlewares=admin-allowlist-monitoring',
     ],
 
     command               => join([
