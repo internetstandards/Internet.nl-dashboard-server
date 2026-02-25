@@ -34,8 +34,6 @@ class dashboard::app (
 
   # all paths that should be routed to Django dynamic backend
   $dynamic_content_paths = join([
-    '/accounts/',
-    '/account/',
     '/admin/',
     '/api/',
     '/data/',
