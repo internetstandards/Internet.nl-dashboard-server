@@ -34,19 +34,20 @@ class dashboard::app (
 
   # all paths that should be routed to Django dynamic backend
   $dynamic_content_paths = join([
-    '/accounts/',
-    '/account/',
-    '/admin/',
-    '/api/',
-    '/data/',
-    '/jet/',
-    '/logout',
-    '/mail/',
-    '/session/',
-    '/static/',
-    '/upload/',
-    '/security.txt',
-    '/.well-known/security.txt'
+    # Fix https://github.com/internetstandards/Internet.nl-dashboard/issues/653: prevent confusion between django path and app path by anchoring app paths with ^.
+    '^/accounts/',
+    '^/account/',
+    '^/admin/',
+    '^/api/',
+    '^/data/',
+    '^/jet/',
+    '^/logout$',
+    '^/mail/',
+    '^/session/',
+    '^/static/',
+    '^/upload/',
+    '^/security\\.txt$',
+    '^/\\.well-known/security\\.txt$'
   ], '|')
 
   ::docker::run { 'dashboard':
