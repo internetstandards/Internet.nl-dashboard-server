@@ -5,20 +5,6 @@ dashboard::le_staging: false
 dashboard::app::image_tag: latest
 # how often to check for docker image update
 dashboard::app::auto_update_interval: 5min
-# we're changing authentication paths in 5.2.0
-dashboard:app::dynamic_content_paths: join([
-    '/admin/',
-    '/api/',
-    '/data/',
-    '/jet/',
-    '/logout',
-    '/mail/',
-    '/session/',
-    '/static/',
-    '/upload/',
-    '/security.txt',
-    '/.well-known/security.txt'
-  ], '|')
 
 # explicitly set fixed IPv6 address bound to domain name, other IPv6 addresses
 # and gateway are obtained through RA

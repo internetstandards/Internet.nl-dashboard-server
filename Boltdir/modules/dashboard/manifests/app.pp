@@ -35,8 +35,6 @@ class dashboard::app (
   # all paths that should be routed to Django dynamic backend
   $dynamic_content_paths = join([
     # Fix https://github.com/internetstandards/Internet.nl-dashboard/issues/653: prevent confusion between django path and app path by anchoring app paths with ^.
-    '^/accounts/',
-    '^/account/',
     '^/admin/',
     '^/api/',
     '^/data/',
@@ -62,7 +60,7 @@ class dashboard::app (
     labels                => [
       'traefik.enable=true',
       # all dynamic content should be served by Django, otherwise fallback to static content
-      "traefik.http.routers.dashboard.rule=${hostrules} && PathRegexp(\"${dynamic_content_paths}\")",
+      "traefik.http.routers.dashboard.rule=${hostrules} && PathRegexp(`${dynamic_content_paths}`)",
       'traefik.http.routers.dashboard.entrypoints=websecure',
     ],
     env                   => [
