@@ -34,19 +34,20 @@ class dashboard::app (
 
   # all paths that should be routed to Django dynamic backend
   $dynamic_content_paths = join([
-    '/accounts/',
-    '/account/',
-    '/admin/',
-    '/api/',
-    '/data/',
-    '/jet/',
-    '/logout',
-    '/mail/',
-    '/session/',
-    '/static/',
-    '/upload/',
-    '/security.txt',
-    '/.well-known/security.txt'
+    # Fix https://github.com/internetstandards/Internet.nl-dashboard/issues/653: prevent confusion between django path and app path by anchoring app paths with ^.
+    '^/accounts/',
+    '^/account/',
+    '^/admin/',
+    '^/api/',
+    '^/data/',
+    '^/jet/',
+    '^/logout$',
+    '^/mail/',
+    '^/session/',
+    '^/static/',
+    '^/upload/',
+    '^/security\\.txt$',
+    '^/\\.well-known/security\\.txt$'
   ], '|')
 
   ::docker::run { 'dashboard':
@@ -74,6 +75,9 @@ class dashboard::app (
       'DB_HOST=db',
       'WORKER_ROLE=default',
       'BROKER=redis://broker:6379/0',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       "SENTRY_DSN=${sentry_dsn}",
       "DASHBOARD_SUBDOMAIN_SUGGESTION_SERVER_ADDRESS=https://${dashboard::subdomain}.${dashboard::domain}/ctlssa",
       # reduce amount of concurrent worker processes
@@ -119,6 +123,9 @@ class dashboard::app (
       'DB_HOST=db',
       'WORKER_ROLE=default_ipv4',
       'BROKER=redis://broker:6379/0',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
@@ -148,6 +155,9 @@ class dashboard::app (
       'DB_HOST=db',
       'WORKER_ROLE=reporting',
       'BROKER=redis://broker:6379/0',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
@@ -176,6 +186,9 @@ class dashboard::app (
       'DB_HOST=db',
       'WORKER_ROLE=default_ipv4',
       'BROKER=redis://broker:6379/0',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
@@ -201,6 +214,9 @@ class dashboard::app (
       'DB_HOST=db',
       'WORKER_ROLE=storage',
       'BROKER=redis://broker:6379/0',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
     ],
