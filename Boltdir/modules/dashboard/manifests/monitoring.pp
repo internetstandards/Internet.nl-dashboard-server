@@ -7,7 +7,7 @@ class dashboard::monitoring (
   $sourcerange = join($whitelist['iptables'] + $whitelist['ip6tables'], ',')
 
   ::docker::run { 'monitoring':
-    image                 => 'quay.io/prometheus/node-exporter',
+    image                 => 'quay.io/prometheus/node-exporter:v1.11.1',
     tag                   => latest,
     systemd_restart       => always,
     net                   => dashboard,
