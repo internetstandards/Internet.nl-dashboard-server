@@ -26,8 +26,6 @@ base::firewall::admin_ip_whitelist:
     # stitch
     - "149.210.226.68/32"
     - "77.172.254.93/32"
-    # monitoring
-    - "162.55.63.10/32"
     # benjamin
     - 144.43.250.21
     - 144.43.250.23
@@ -39,8 +37,6 @@ base::firewall::admin_ip_whitelist:
     - "2a01:7c8:aaad:c8::/48"
     # stitch
     - "2a02:a45a:bf26:1::/64"
-    # monitoring
-    - "2a01:4f8:1c1c:800d::/64"
     # benjamin
     - "2a02:a463:46f::/48"
 
