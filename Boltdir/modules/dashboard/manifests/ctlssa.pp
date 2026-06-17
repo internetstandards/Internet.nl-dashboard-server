@@ -1,10 +1,12 @@
 class dashboard::ctlssa (
-    $version = 'main',
+    $version = 'certstream-server-go',
     $secret_key = $dashboard::app::secret_key,
+    $allowlist = $base::firewall::admin_ip_whitelist,
 ) {
     include vcsrepo::manage::git
 
     $ctlssa_hostnames = join($dashboard::app::_hosts, ",")
+    $sourcerange = join($allowlist['iptables'] + $allowlist['ip6tables'], ',')
 
     class {'docker::compose':
         ensure  => present,
@@ -36,8 +38,16 @@ class dashboard::ctlssa (
                 environment:
                     - SECRET_KEY=${secret_key}
             certstream:
-              # limit nr of cpus this application can use to prevent OS resource starvation
-              cpu_count: 1
+                labels:
+                    - "traefik.enable=true"
+                    - 'traefik.http.routers.certstream-metrics.rule=${dashboard::app::hostrules} && Path(`/certstream/metrics`)'
+                    - "traefik.http.routers.certstream-metrics.entrypoints=websecure"
+                    - "traefik.http.middlewares.admin-allowlist.ipallowlist.sourcerange=${sourcerange}"
+                    - "traefik.http.middlewares.certstream-metrics-path.replacepath.path=/metrics"
+                    - "traefik.http.routers.certstream-metrics.middlewares=admin-allowlist,certstream-metrics-path"
+                    - "traefik.http.services.certstream-metrics.loadbalancer.server.port=8080"
+                # limit nr of cpus this application can use to prevent OS resource starvation
+                cpu_count: 1
 
         |END
     } ~> Docker_compose['internetnl-ctlssa']
