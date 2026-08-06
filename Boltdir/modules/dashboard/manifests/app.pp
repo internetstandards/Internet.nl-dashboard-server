@@ -135,6 +135,66 @@ class dashboard::app (
     ],
 }
 
+  ::docker::run { 'dashboard-worker-dramatiq-dns':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
+    env                   => [
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
+      'ALLOWED_HOSTS=*',
+      'DJANGO_DATABASE=production',
+      'DB_ENGINE=postgresql_psycopg2',
+      'DB_HOST=db',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
+      "SENTRY_DSN=${sentry_dsn}",
+    ],
+    # django-dramatiq defaults to one process per available CPU and 8 threads per process.
+    command               => 'rundramatiq --processes 4 --threads 8 --queues dns',
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        $dashboard::dns_ip
+    ],
+  }
+
+  ::docker::run { 'dashboard-worker-dramatiq-storage':
+    image                 => "internetstandards/dashboard:${image_tag}",
+    extra_parameters      => ['--security-opt seccomp=unconfined'],
+    systemd_restart       => always,
+    net                   => dashboard,
+    health_check_interval => 60,
+    volumes               => [
+      '/srv/dashboard-frontend/uploads/:/source/dashboard/uploads',
+    ],
+    env                   => [
+      "SECRET_KEY=${secret_key}",
+      "FIELD_ENCRYPTION_KEY=${field_encryption_key}",
+      'ALLOWED_HOSTS=*',
+      'DJANGO_DATABASE=production',
+      'DB_ENGINE=postgresql_psycopg2',
+      'DB_HOST=db',
+      'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
+      'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
+      'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
+      "SENTRY_DSN=${sentry_dsn}",
+    ],
+    # django-dramatiq defaults to one process per available CPU and 8 threads per process.
+    command               => 'rundramatiq --processes 4 --threads 8 --queues storage',
+    dns => [
+        # use permissive resolver container (see `resolver` below)
+        $dashboard::dns_ip
+    ],
+  }
+
   ::docker::run { 'dashboard-worker-reporting':
     image                 => "internetstandards/dashboard:${image_tag}",
     extra_parameters      => ['--security-opt seccomp=unconfined'],
