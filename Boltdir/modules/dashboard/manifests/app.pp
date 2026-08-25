@@ -158,7 +158,7 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     # django-dramatiq defaults to one process per available CPU and 8 threads per process.
-    command               => 'rundramatiq --processes 4 --threads 8 --queues dns',
+    command               => 'rundramatiq --processes 1 --threads 16 --queues dns',
     dns => [
         # use permissive resolver container (see `resolver` below)
         $dashboard::dns_ip
@@ -188,7 +188,7 @@ class dashboard::app (
       "SENTRY_DSN=${sentry_dsn}",
     ],
     # django-dramatiq defaults to one process per available CPU and 8 threads per process.
-    command               => 'rundramatiq --processes 4 --threads 8 --queues storage',
+    command               => 'rundramatiq --processes 1 --threads 8 --queues storage',
     dns => [
         # use permissive resolver container (see `resolver` below)
         $dashboard::dns_ip
