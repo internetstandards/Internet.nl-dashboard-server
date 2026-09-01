@@ -1,5 +1,5 @@
 class dashboard::ctlssa (
-    $version = 'certstream-server-go',
+    $version = '603673bf61eb32503d77d24f0a28509d8e76dca2',
     $secret_key = $dashboard::app::secret_key,
     $allowlist = $base::firewall::admin_ip_whitelist,
 ) {
@@ -13,10 +13,11 @@ class dashboard::ctlssa (
     }
 
     vcsrepo { '/opt/internetnl-ctlssa/':
-        ensure   => present,
-        provider => git,
-        source   => 'https://github.com/internetstandards/Internet.nl-ct-log-subdomain-suggestions-api.git',
-        revision => $version,
+        ensure     => present,
+        provider   => git,
+        source     => 'https://github.com/internetstandards/Internet.nl-ct-log-subdomain-suggestions-api.git',
+        revision   => $version,
+        submodules => true,
     } ~> Docker_compose['internetnl-ctlssa']
 
     file { '/opt/internetnl-ctlssa/compose-local.yml':
