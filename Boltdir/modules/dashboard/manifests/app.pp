@@ -4,12 +4,18 @@ class dashboard::app (
   $field_encryption_key,
   $image_tag = latest,
   $sentry_dsn = undef,
+  $wsm_internet_nl_api_url = undef,
   $auto_update_interval = undef,
   $_hosts = $dashboard::hosts << "${dashboard::subdomain}.${dashboard::domain}",
   $hosts = join($_hosts,'|'),
   $hostrules = "(${join(prefix(suffix($_hosts, '")'),'Host("'), " || ")})",
 ) {
   include ::dashboard::ctlssa
+
+  $wsm_internet_nl_api_url_env = $wsm_internet_nl_api_url ? {
+    undef   => [],
+    default => ["WSM_INTERNET_NL_API_URL=${wsm_internet_nl_api_url}"],
+  }
 
   file { '/usr/local/bin/dashboard':
     source => 'puppet:///modules/dashboard/dashboard.sh',
@@ -78,10 +84,11 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       "SENTRY_DSN=${sentry_dsn}",
       "DASHBOARD_SUBDOMAIN_SUGGESTION_SERVER_ADDRESS=https://${dashboard::subdomain}.${dashboard::domain}/ctlssa",
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
       # reduce amount of concurrent worker processes
       'UWSGI_CHEAPER=1',
       'UWSGI_WORKERS=4',
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     dns => [
         # use permissive resolver container (see `resolver` below)
         $dashboard::dns_ip
@@ -124,9 +131,10 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
       'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     # for some reason redis tells us that kickoff3 exists, might be a glitch and that it's just kickoff...
     command               => 'celery_dashboard worker -Q storage,celery,isolated,kickoff,kickoff1,kickoff2,kickoff3,kickoff4,database_deprecate,database_deprecate3,database,database3',
     dns => [
@@ -156,7 +164,7 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       "WSM_NAMESERVERS=${dashboard::dns_ip}",
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     # django-dramatiq defaults to one process per available CPU and 8 threads per process.
     command               => 'rundramatiq --processes 1 --threads 16 --queues dns',
     dns => [
@@ -186,7 +194,7 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
       "WSM_NAMESERVERS=${dashboard::dns_ip}",
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     # django-dramatiq defaults to one process per available CPU and 8 threads per process.
     command               => 'rundramatiq --processes 1 --threads 8 --queues storage',
     dns => [
@@ -216,9 +224,10 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
       'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     command               => 'celery_dashboard worker -Q reporting',
     dns => [
         # use permissive resolver container (see `resolver` below)
@@ -247,9 +256,10 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
       'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     command               => 'celery_dashboard worker -Q ipv4,internet,internetnl',
     dns => [
         # use permissive resolver container (see `resolver` below)
@@ -275,9 +285,10 @@ class dashboard::app (
       'DRAMATIQ_BROKER_URL=redis://broker:6379/1',
       'DRAMATIQ_BROKER_URL_RESULT_BACKEND=redis://broker:6379/2',
       'DRAMATIQ_BROKER_URL_RATE_LIMITER_BACKEND=redis://broker:6379/3',
+      "WSM_NAMESERVERS=${dashboard::dns_ip}",
       'C_FORCE_ROOT=1',
       "SENTRY_DSN=${sentry_dsn}",
-    ],
+    ] + $wsm_internet_nl_api_url_env,
     command               => 'celery_dashboard beat -l info --pidfile=/var/tmp/celerybeat.pid',
     dns => [
         # use permissive resolver container (see `resolver` below)

@@ -2,6 +2,7 @@
 dashboard::domain: internet.nl
 dashboard::le_staging: false
 dashboard::app::image_tag: live
+dashboard::app::wsm_internet_nl_api_url: https://batch.internet.nl/api/batch/v2
 
 # explicitly set fixed IPv6 address bound to domain name, other IPv6 addresses
 # and gateway are obtained through RA
