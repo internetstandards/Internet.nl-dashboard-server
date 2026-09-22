@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 # Set paths for binaries used
 bolt ?= /opt/puppetlabs/bin/bolt
-sops ?= sops
+sops_version ?= 3.13.3
 
 ifeq ($(shell uname -s),Darwin)
 bin = /usr/local/bin
@@ -10,13 +10,14 @@ else
 bin = /usr/bin
 endif
 
+sops ?= ${bin}/sops
 puppet-lint = ${bin}/puppet-lint
 inspec = ${bin}/inspec
 
 ssh_user = root
 
 # Default action is to install dependencies
-all: | ${bolt}
+all: | ${bolt} ${sops}
 
 # Targets to perform update of the Dashboard application
 promote_latest_to_staging:
@@ -54,7 +55,7 @@ secret_files = Boltdir/data/env/live_secret.yaml Boltdir/data/env/staging_secret
 .PHONY: force_decrypt
 force_decrypt:
 
-Boltdir/data/env/%_secret.yaml: Boltdir/data/env/%_secret.sops.yaml force_decrypt
+Boltdir/data/env/%_secret.yaml: Boltdir/data/env/%_secret.sops.yaml force_decrypt | ${sops}
 	${sops} decrypt --output $@ $<
 
 # Apply server configuration to nodes
@@ -96,6 +97,8 @@ Boltdir/.modules/: Boltdir/Puppetfile Boltdir/bolt-project.yaml| ${bolt}
 
 # Install dependencies
 ifeq ($(shell uname -s),Darwin)
+${sops}:
+	brew install sops
 ${bolt}:
 	brew tap puppetlabs/puppet
 	brew install --cask puppet-bolt
@@ -105,6 +108,12 @@ ${puppet-lint}:
 ${inspec}:
 	brew install --cask chef/chef/inspec
 else ifneq (,$(shell grep ubuntu /etc/os-release))
+${sops}:
+	@set -eu; \
+	sops_deb=$$(mktemp /tmp/sops.XXXXXX.deb); \
+	trap 'rm -f "$${sops_deb}"' EXIT; \
+	wget -q -O "$${sops_deb}" "https://github.com/getsops/sops/releases/download/v${sops_version}/sops_${sops_version}_$$(dpkg --print-architecture).deb"; \
+	sudo dpkg -i "$${sops_deb}"
 ${puppet-lint}
 	sudo apt-get install -yqq ${@F}
 ${bolt}:
