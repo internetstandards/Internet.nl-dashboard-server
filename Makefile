@@ -2,6 +2,7 @@ SHELL = /bin/bash
 
 # Set paths for binaries used
 bolt ?= /opt/puppetlabs/bin/bolt
+sops ?= sops
 
 ifeq ($(shell uname -s),Darwin)
 bin = /usr/local/bin
@@ -47,17 +48,32 @@ test_inspec: | ${inspec}
 	${inspec} exec spec/ \
 		-t ssh://${ssh_user}@$$(hcloud server ip internetnl-dashboard-lab)
 
+# Decrypt secrets required by Bolt and remove them after the target finishes.
+secret_files = Boltdir/data/env/live_secret.yaml Boltdir/data/env/staging_secret.yaml
+.INTERMEDIATE: ${secret_files}
+.PHONY: force_decrypt
+force_decrypt:
+
+Boltdir/data/env/%_secret.yaml: Boltdir/data/env/%_secret.sops.yaml force_decrypt
+	${sops} decrypt --output $@ $<
+
 # Apply server configuration to nodes
-apply_staging apply_live apply_all: apply_%: Boltdir/.modules/ | ${bolt}
+apply_staging apply_live: apply_%: Boltdir/data/env/%_secret.yaml Boltdir/.modules/ | ${bolt}
 	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
+
+apply_all: ${secret_files} Boltdir/.modules/ | ${bolt}
+	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets all ${args}
 
 apply_lab: apply_%: Boltdir/.modules/ | ${bolt}
 	LAB_URI=$$(hcloud server ip internetnl-dashboard-lab) \
 	SSH_USER=${ssh_user} \
 	${bolt} apply --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
 
-plan_staging plan_live plan_all: plan_%: Boltdir/.modules/ | ${bolt}
+plan_staging plan_live: plan_%: Boltdir/data/env/%_secret.yaml Boltdir/.modules/ | ${bolt}
 	${bolt} apply --noop --verbose Boltdir/modules/dashboard/manifests/site.pp --targets $* ${args}
+
+plan_all: ${secret_files} Boltdir/.modules/ | ${bolt}
+	${bolt} apply --noop --verbose Boltdir/modules/dashboard/manifests/site.pp --targets all ${args}
 
 plan_lab: plan_%: Boltdir/.modules/ | ${bolt}
 	LAB_URI=$$(hcloud server ip internetnl-dashboard-lab) \
