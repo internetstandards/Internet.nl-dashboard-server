@@ -27,6 +27,19 @@ class base (
     'cron', 'curl', 'net-tools', 'ncdu', 'tcpdump',
   ])
 
+  # No host service uses a local MTA. Purging Exim also removes the vulnerable
+  # libunbound DNSSEC validator loaded through Exim's DANE support.
+  package { [
+    'exim4',
+    'exim4-base',
+    'exim4-config',
+    'exim4-daemon-light',
+    'libgnutls-dane0',
+    'libunbound8',
+  ]:
+    ensure => purged,
+  }
+
   # sudo
   sudo::conf { 'sudo':
     priority => 10,
