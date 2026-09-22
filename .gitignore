@@ -5,3 +5,4 @@ Boltdir/data/env/*_secret.yaml
 .make.*
 .rerun.json
 .idea/*
+.direnv/*
