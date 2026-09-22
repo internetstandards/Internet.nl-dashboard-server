@@ -401,7 +401,9 @@ class dashboard::app (
     content => epp('dashboard/unbound-permissive.conf', {});
   } ~>
   ::docker::run { 'resolver':
-    image                 => "alpinelinux/unbound",
+    # Alpine unbound 1.25.2-r2 with the CVE-2026-81642 fix
+    # `docker buildx imagetools inspect alpinelinux/unbound:latest | grep Digest`
+    image                 => 'alpinelinux/unbound@sha256:a9a03a985d8ccd1a8fda5d94397f22fca3adee380c47e49374137093f55a4ce4',
     systemd_restart       => always,
     net                   => dashboard,
     health_check_interval => 60,
