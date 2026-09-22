@@ -1,0 +1,6 @@
+creation_rules:
+  - path_regex: ^Boltdir/data/env/(live|staging)_secret\.sops\.yaml$
+    pgp:
+      - 4981DFA83A567A93054EA31F63BDD6F6360D5D25 # Elger Jonker <elger.jonker@gmail.com>
+      - ACB788294C7E12BAE9228C60D894E15F45028563 # Internet.nl <vraag@internet.nl>, <question@internet.nl>
+      - EDD9F98D0D3E3A9767484317B1AE6948ED49BB55 # Johan Bloemberg <mail@ijohan.nl>

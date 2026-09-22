@@ -1,6 +1,7 @@
 *.log
 .vagrant/
 Boltdir/.*
+Boltdir/data/env/*_secret.yaml
 .make.*
 .rerun.json
 .idea/*
